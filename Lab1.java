@@ -14,7 +14,7 @@ public class Lab1 {
     }
     catch (CommandException e) {
       e.printStackTrace();    // or only e.getMessage() for the error
-      System.exit(1);
+      System.exit(1); // arash rocks
     }
   }
 }
