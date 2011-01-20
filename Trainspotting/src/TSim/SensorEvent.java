@@ -82,6 +82,7 @@ public class SensorEvent implements TSimInformation
     }
 
 
+    @Override
     public String toString() {
 	return "train " + trainId + ", sensor at ("+xPos+","+yPos+") "+ 
 	    (status==ACTIVE ? "active" : "inactive");
