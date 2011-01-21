@@ -3,8 +3,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -33,7 +31,7 @@ public class RailMap {
         try {
             sc = new Scanner(file);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(RailMap.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("file not found: " + ex);
         }
 
         while(sc.hasNext()){

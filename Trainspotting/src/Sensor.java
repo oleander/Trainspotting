@@ -10,7 +10,7 @@
 public class Sensor {
     private Point position;
 
-    
+    //given direction return action
     public RunnableTrain getAction(int velocity) {
         return null;
         /*

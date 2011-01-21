@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author arash
+ *  @author arash
  */
 public class Train extends Thread implements Runnable{
 
     private RailMap railMap;
-    private Map<Sensor, ArrayList<String> > pendingActions;
+    private Map<Sensor, ArrayList<RunnableTrain> > pendingActions;
     private int currentVelocity;
     private int maxVelocity;
     private int id;
@@ -26,7 +26,7 @@ public class Train extends Thread implements Runnable{
     public Train(RailMap railMap, int maxVelocity, int id) {
 
         this.railMap = railMap;
-        this.pendingActions = new HashMap<Sensor, ArrayList<String>>();
+        this.pendingActions = new HashMap<Sensor, ArrayList<RunnableTrain>>();
         this.currentVelocity = 0;
         this.maxVelocity = maxVelocity;
         this.id = id;
