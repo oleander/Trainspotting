@@ -24,4 +24,8 @@ public class Sensor {
          */
     }
 
+    public Sensor(Point position) {
+        this.position = position;
+    }
+
 }

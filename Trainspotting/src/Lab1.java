@@ -1,12 +1,15 @@
 
 import TSim.*;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Lab1 {
 
     public static void main(String[] a) {
-        new Lab1();
+        RailMap rm = new RailMap();
+        System.out.println("hallås");
+        rm.parse(new File("build/classes/bana"));
     }
 
     public Lab1() {
@@ -19,7 +22,7 @@ public class Lab1 {
         new Thread(new Runnable() {
 
             public void run() {
-                startControlTrainForever(2);
+                //startControlTrainForever(2);
             }
         }).start();
 
@@ -33,19 +36,21 @@ public class Lab1 {
     }
 
     public void startControlTrainForever(int id) {
-        TSimInterface inter = TSimInterface.getInstance();
-
-        while (true) {
-            SensorEvent se = null;
-            try {
-                inter.setSpeed(id, 10);
-                se = inter.getSensor(id);
-            } catch (CommandException ex) {
-                Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            TSimInterface inter = TSimInterface.getInstance();
+            inter.setSpeed(id, 10);
+            while (true) {
+                SensorEvent se = null;
+                try {
+                    se = inter.getSensor(id);
+                } catch (CommandException ex) {
+                    Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            System.err.println("spöket laban");
+        } catch (CommandException ex) {
+            Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
