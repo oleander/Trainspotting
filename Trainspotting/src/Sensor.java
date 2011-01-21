@@ -12,11 +12,16 @@ public class Sensor {
 
     
     public RunnableTrain getAction(int velocity) {
+        return null;
+        /*
+         * We write lambda functions this way
         return new RunnableTrain() {
             public void run(Train t) {
                 
             }
         };
+         *
+         */
     }
 
 }

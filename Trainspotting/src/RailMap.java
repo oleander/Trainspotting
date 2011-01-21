@@ -17,7 +17,8 @@ import java.util.logging.Logger;
  */
 public class RailMap {
     private Map<Point, Sensor> points;
-    
+    //array-grejen
+
     public Sensor findSensor(Point p){
         return points.get(p);
     }
