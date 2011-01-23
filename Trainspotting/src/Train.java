@@ -1,4 +1,7 @@
 
+import TSim.CommandException;
+import TSim.TSimInformation;
+import TSim.TSimInterface;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -52,9 +55,15 @@ public class Train extends Thread implements Runnable {
 
     }
 
-    public void setVelocity(int v) {
-        say("Setting velocity " + v);
-        throw new NotImplementedException();
+    public void setVelocity(int velocity) {
+        say("Setting velocity " + velocity);
+        TSimInterface iface = TSimInterface.getInstance();
+        try {
+            iface.setSpeed(id, velocity);
+        } catch (CommandException ex) {
+            System.err.println("error setting velocity!!!!!!!!!");
+        }
+        currentVelocity = velocity;
     }
 
     public int getLastSetVelocity() {
