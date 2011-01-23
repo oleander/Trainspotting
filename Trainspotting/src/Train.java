@@ -5,15 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-
-public class Train extends Thread implements Runnable{
+public class Train extends Thread implements Runnable {
 
     private RailMap railMap;
-    private Map<Sensor, RunnableTrain > pendingActions;
+    private Map<Sensor, RunnableTrain> pendingActions;
     private int currentVelocity;
     private int maxVelocity;
     private int id;
-    
 
     public Train(RailMap railMap, int maxVelocity, int id) {
 
@@ -28,20 +26,33 @@ public class Train extends Thread implements Runnable{
     }
 
     /**
-     * Run an action next time coming to a sensor
+     * Run an action next time coming to a sensor (or leaving the sensor?)
      */
-    public void addOneTimeAction(Sensor s, RunnableTrain action){
-        throw new NotImplementedException();
+    // TODO: decide wheater it is for entering or leaving sensor
+    public void addOneTimeAction(Sensor s, final RunnableTrain action) {
+        if (pendingActions.containsKey(s)) {
+            // already exists one, must concatenate existing with new action.
+            final RunnableTrain prevAction = pendingActions.get(s);
+            pendingActions.put(s, new RunnableTrain() {
+
+                public void run(Train t) {
+                    prevAction.run(t);
+                    action.run(t);
+                }
+            });
+        } else {
+            pendingActions.put(s, action);
+        }
     }
 
     @Override
-    public void run(){
+    public void run() {
         throw new NotImplementedException();
-        
-        
+
+
     }
 
-    public void setVelocity(int v){
+    public void setVelocity(int v) {
         say("Setting velocity " + v);
         throw new NotImplementedException();
     }
@@ -50,16 +61,16 @@ public class Train extends Thread implements Runnable{
         return currentVelocity;
     }
 
-    public void say(String msg){
+    public void say(String msg) {
         System.err.println("Train " + id + "says: " + msg);
     }
 
-    public void stopTrain(){
+    public void stopTrain() {
         say("Stopping train ...");
         setVelocity(0);
     }
-    
-    public void stopWaitTurnAround(){
+
+    public void stopWaitTurnAround() {
 
         stopTrain();
         try {
@@ -70,7 +81,7 @@ public class Train extends Thread implements Runnable{
         setMaxVelocity();
     }
 
-    public boolean isMovingUpOrRight(){
+    public boolean isMovingUpOrRight() {
         return true;
     }
 
