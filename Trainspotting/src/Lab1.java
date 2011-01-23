@@ -7,9 +7,10 @@ import java.util.logging.Logger;
 public final class Lab1 {
 
     public static void main(String[] a) {
-        RailMap rm = new RailMap();
-        System.out.println("hallås");
-        rm.parse(new File("build/classes/bana"));
+        new Lab1();
+//        RailMap rm = new RailMap();
+//        System.out.println("hallås");
+//        rm.parse(new File("build/classes/bana"));
     }
 
     public Lab1() {

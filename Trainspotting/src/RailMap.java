@@ -1,20 +1,19 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
 import java.util.Scanner;
 
 public class RailMap {
 
-    private Map<Point, Sensor> points;
-    public boolean[][] array;
-    public Sensor[][] sensorArray;
+    private int width, height;
+    private boolean[][] array;
+    private Sensor[][] sensorArray;
 
     RailMap() {
     }
     //array-grejen
 
-    public Sensor findSensor(Point p) {
-        return points.get(p);
+    public Sensor findSensor(int x, int y) {
+        return sensorArray[x][y];
     }
 
     public void parse(File file) {
@@ -30,7 +29,8 @@ public class RailMap {
         }
 
 
-        int width = sc.nextInt(), height = sc.nextInt();
+        width = sc.nextInt();
+        height = sc.nextInt();
         array = new boolean[width][height];
         sensorArray = new Sensor[width][height];
         sc.nextLine(); //remove eempty dimensions-line
@@ -82,5 +82,23 @@ public class RailMap {
         }
          *
          */
+    }
+
+
+
+    public boolean[][] getArray() {
+        return array;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public Sensor[][] getSensorArray() {
+        return sensorArray;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }
