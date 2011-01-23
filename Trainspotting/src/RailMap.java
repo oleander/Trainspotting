@@ -10,7 +10,6 @@ public class RailMap {
 
     RailMap() {
     }
-    //array-grejen
 
     public Sensor findSensor(int x, int y) {
         return sensorArray[x][y];
