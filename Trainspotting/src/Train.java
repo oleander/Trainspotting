@@ -53,7 +53,7 @@ public class Train extends Thread implements Runnable {
     public void run() {
         TSimInterface iface = TSimInterface.getInstance();
 
-        while(true){
+        while (true) {
             SensorEvent event = null;
             try {
                 event = iface.getSensor(id);
@@ -65,10 +65,10 @@ public class Train extends Thread implements Runnable {
 
             Sensor sensor =
                     railMap.getSensorArray()[event.getXpos()][event.getYpos()];
-            if(event.getStatus() == SensorEvent.INACTIVE){
+            if (event.getStatus() == SensorEvent.INACTIVE) {
                 continue; // TODO: for now completely ignoring inactive events.
-            }else{
-                if(pendingActions.containsKey(sensor)){
+            } else {
+                if (pendingActions.containsKey(sensor)) {
                     pendingActions.get(sensor).run(this);
                     pendingActions.remove(sensor);
                 }
