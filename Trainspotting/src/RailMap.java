@@ -53,20 +53,20 @@ public class RailMap {
                 break;
             }
 
-            String[] lines = line.split(" ");
+            String[] sline = line.split(" ");
 
-            if(lines[lines.length - 1].equals("station")){
+            if(sline[sline.length - 1].equals("station")){
                 continue;
             }
-            System.out.println("line = " + line);
-            int x = Integer.parseInt(lines[1]);
-            int y = Integer.parseInt(lines[2]);
-            if (lines[0].equals("R")) {
-                int numRails = Integer.parseInt(lines[3]);
-                boolean isSensor = lines[4+numRails].equals("Sensor");
+            int x = Integer.parseInt(sline[1]);
+            int y = Integer.parseInt(sline[2]);
+            if (sline[0].equals("R")) {
+                //int numRails = Integer.parseInt(lines[3]); // not needed now
+                boolean isSensor = sline[sline.length-1].equals("Sensor");
 
                 array[x][y] = true;
-                sensorArray[x][y] = isSensor ? new Sensor(new Point(x, y)) : null;
+                sensorArray[x][y] =
+                        isSensor ? new Sensor(new Point(x, y)) : null;
             } 
             else {
             }
