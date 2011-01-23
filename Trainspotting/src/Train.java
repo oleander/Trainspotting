@@ -1,6 +1,6 @@
 
 import TSim.CommandException;
-import TSim.TSimInformation;
+import TSim.SensorEvent;
 import TSim.TSimInterface;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +15,7 @@ public class Train extends Thread implements Runnable {
     private int currentVelocity;
     private int maxVelocity;
     private int id;
+    private boolean goingForwards;
 
     public Train(RailMap railMap, int maxVelocity, int id) {
 
@@ -50,7 +51,32 @@ public class Train extends Thread implements Runnable {
 
     @Override
     public void run() {
-        throw new NotImplementedException();
+        TSimInterface iface = TSimInterface.getInstance();
+
+        while(true){
+            SensorEvent event = null;
+            try {
+                event = iface.getSensor(id);
+            } catch (CommandException ex) {
+                System.err.println("interface didn't allow getting sensor!!!");
+            } catch (InterruptedException ex) {
+                System.err.println("train got interrupted waiting for sensor!");
+            }
+
+            Sensor sensor =
+                    railMap.getSensorArray()[event.getXpos()][event.getYpos()];
+            if(event.getStatus() == SensorEvent.INACTIVE){
+                continue; // TODO: for now completely ignoring inactive events.
+            }else{
+                if(pendingActions.containsKey(sensor)){
+                    pendingActions.get(sensor).run(this);
+                    pendingActions.remove(sensor);
+                }
+                throw new NotImplementedException();
+                // TODO: what direction should be given? How should train know?
+                //sensor.getAction(123).run(this);
+            }
+        }
 
 
     }
@@ -82,6 +108,7 @@ public class Train extends Thread implements Runnable {
     public void stopWaitTurnAround() {
 
         stopTrain();
+        goingForwards ^= true; // turn direction
         try {
             sleep(4000);
         } catch (InterruptedException ex) {
@@ -96,6 +123,6 @@ public class Train extends Thread implements Runnable {
 
     public void setMaxVelocity() {
         say("Setting max velocity ...");
-        setVelocity(maxVelocity);
+        setVelocity((goingForwards ? 1 : -1) * maxVelocity);
     }
 }
