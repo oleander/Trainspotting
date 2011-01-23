@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /*
  * To change this template, choose Tools | Templates
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 public class Train extends Thread implements Runnable{
 
     private RailMap railMap;
-    private Map<Sensor, ArrayList<RunnableTrain> > pendingActions;
+    private Map<Sensor, RunnableTrain > pendingActions;
     private int currentVelocity;
     private int maxVelocity;
     private int id;
@@ -26,7 +27,7 @@ public class Train extends Thread implements Runnable{
     public Train(RailMap railMap, int maxVelocity, int id) {
 
         this.railMap = railMap;
-        this.pendingActions = new HashMap<Sensor, ArrayList<RunnableTrain>>();
+        this.pendingActions = new HashMap<Sensor, RunnableTrain>();
         this.currentVelocity = 0;
         this.maxVelocity = maxVelocity;
         this.id = id;
@@ -34,17 +35,24 @@ public class Train extends Thread implements Runnable{
 
         // initialisera första blockaden
     }
-    
+
+    /**
+     * Run an action next time coming to a sensor
+     */
+    public void addOneTimeAction(Sensor s, RunnableTrain action){
+        throw new NotImplementedException();
+    }
 
     @Override
     public void run(){
-        // ...
+        throw new NotImplementedException();
         
         
     }
 
     public void setVelocity(int v){
         say("Setting velocity " + v);
+        throw new NotImplementedException();
     }
 
     public int getLastSetVelocity() {
