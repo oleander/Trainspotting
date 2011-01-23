@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Lab1 {
+public final class Lab1 {
 
     public static void main(String[] a) {
         RailMap rm = new RailMap();
@@ -13,20 +13,24 @@ public class Lab1 {
     }
 
     public Lab1() {
+        configInterface();
+        startTrains();
+
+    }
+
+    private void startTrains() {
         new Thread(new Runnable() {
+
             public void run() {
                 startControlTrainForever(1);
             }
         }).start();
-
         new Thread(new Runnable() {
 
             public void run() {
                 //startControlTrainForever(2);
             }
         }).start();
-
-        configInterface();
     }
 
     public void configInterface() {
