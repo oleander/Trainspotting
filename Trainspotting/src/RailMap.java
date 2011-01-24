@@ -1,5 +1,7 @@
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class RailMap {
@@ -7,15 +9,19 @@ public class RailMap {
     private int width, height;
     private boolean[][] array;
     private Sensor[][] sensorArray;
+    private ArrayList<Point> trainList;
 
-    RailMap() {
+
+    RailMap(File file) {
+        trainList = new ArrayList<Point>();
+        parse(file);
     }
 
     public Sensor findSensor(int x, int y) {
         return sensorArray[x][y];
     }
 
-    public void parse(File file) {
+    private void parse(File file) {
         Scanner sc = null;
         try {
             sc = new Scanner(file);
@@ -43,20 +49,20 @@ public class RailMap {
 
             String[] sline = line.split(" ");
 
-            if(sline[sline.length - 1].equals("station")){
+            if (sline[sline.length - 1].equals("station")) {
                 continue;
             }
             int x = Integer.parseInt(sline[1]);
             int y = Integer.parseInt(sline[2]);
             if (sline[0].equals("R")) {
                 //int numRails = Integer.parseInt(lines[3]); // not needed now
-                boolean isSensor = sline[sline.length-1].equals("Sensor");
+                boolean isSensor = sline[sline.length - 1].equals("Sensor");
 
                 array[x][y] = true;
                 sensorArray[x][y] =
                         isSensor ? new Sensor(new Point(x, y)) : null;
-            } 
-            else {
+            } else {
+                trainList.add(new Point(x, y));
             }
         }
         // RegExp attempt
@@ -83,7 +89,16 @@ public class RailMap {
          */
     }
 
+    public int[][] getMinusOneFilledArray() {
+        int[][] arr = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                arr[i][j] = -1;
+            }
+        }
 
+        return arr;
+    }
 
     public boolean[][] getArray() {
         return array;
@@ -99,5 +114,13 @@ public class RailMap {
 
     public int getWidth() {
         return width;
+    }
+
+    public int getNumTrains(){
+        return trainList.size();
+    }
+
+    public Point trainStartPos(int id){
+        return trainList.get(id-1);
     }
 }

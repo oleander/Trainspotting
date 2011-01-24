@@ -3,7 +3,9 @@ import TSim.CommandException;
 import TSim.SensorEvent;
 import TSim.TSimInterface;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -16,17 +18,19 @@ public class Train extends Thread implements Runnable {
     private int maxVelocity;
     private int id;
     private boolean goingForwards;
+    private int x0, y0;
 
     public Train(RailMap railMap, int maxVelocity, int id) {
-
         this.railMap = railMap;
-        this.pendingActions = new HashMap<Sensor, RunnableTrain>();
-        this.currentVelocity = 0;
         this.maxVelocity = maxVelocity;
         this.id = id;
+        this.x0 = railMap.trainStartPos(id).x;
+        this.y0 = railMap.trainStartPos(id).y;
 
-
+        this.pendingActions = new HashMap<Sensor, RunnableTrain>();
+        goingForwards = true;
         // initialisera första blockaden
+
     }
 
     /**
@@ -72,9 +76,9 @@ public class Train extends Thread implements Runnable {
                     pendingActions.get(sensor).run(this);
                     pendingActions.remove(sensor);
                 }
-                throw new NotImplementedException();
-                // TODO: what direction should be given? How should train know?
-                //sensor.getAction(123).run(this);
+                int direction =
+                        getDirectionTrainCameWith(x0, y0, event.getXpos(), event.getYpos());
+                sensor.getAction(direction).run(this);
             }
         }
 
@@ -97,7 +101,7 @@ public class Train extends Thread implements Runnable {
     }
 
     public void say(String msg) {
-        System.err.println("Train " + id + "says: " + msg);
+        System.err.println("Train " + id + " says: " + msg);
     }
 
     public void stopTrain() {
@@ -124,5 +128,33 @@ public class Train extends Thread implements Runnable {
     public void setMaxVelocity() {
         say("Setting max velocity ...");
         setVelocity((goingForwards ? 1 : -1) * maxVelocity);
+    }
+
+    private int getDirectionTrainCameWith(int x0, int y0, int x1, int y1){
+        Queue<Point> queue = new LinkedList<Point>();
+        Point startPoint = new Point(x0, y0);
+        queue.add(startPoint);
+
+        int[][] arr = railMap.getMinusOneFilledArray();
+
+        while(!queue.isEmpty()){
+            Point p = queue.poll();
+            if(arr[p.x][p.y] != -1){
+                continue;
+            }
+            arr[p.x][p.y] = 1; //mark visited
+            for (int dir = 0; dir < 4; dir++) {
+                int x = p.x + DirectionArrays.xDirs[dir];
+                int y = p.y + DirectionArrays.yDirs[dir];
+
+                if(x == x1 && y == y1){
+                    return dir;
+                }
+                queue.add(new Point(x, y));
+            }
+        }
+
+        System.err.println("bfs failed!");
+        return -123;
     }
 }

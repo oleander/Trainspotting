@@ -8,9 +8,6 @@ public final class Lab1 {
 
     public static void main(String[] a) {
         new Lab1();
-//        RailMap rm = new RailMap();
-//        System.out.println("hallås");
-//        rm.parse(new File("build/classes/bana"));
     }
 
     public Lab1() {
@@ -20,12 +17,14 @@ public final class Lab1 {
     }
 
     private void startTrains() {
-        new Thread(new Runnable() {
+//        final RailMap rm = new RailMap(new File("build/classes/bana"));
+        final RailMap rm = new RailMap(new File("bana"));
 
-            public void run() {
-                startControlTrainForever(1);
-            }
-        }).start();
+        Train t = new Train(rm, 20, 1);
+        t.setMaxVelocity();
+
+        t.start();
+
         new Thread(new Runnable() {
 
             public void run() {
