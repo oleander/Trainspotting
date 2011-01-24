@@ -89,11 +89,15 @@ public class RailMap {
          */
     }
 
+    /**
+     * Get a array you can search the railway in
+     * @return array to search in. It's a copy, so you can edit it
+     */
     public int[][] getMinusOneFilledArray() {
         int[][] arr = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                arr[i][j] = -1;
+                arr[i][j] = array[i][j] ? 1000 : -1;
             }
         }
 

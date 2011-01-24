@@ -132,7 +132,7 @@ public class Train extends Thread implements Runnable {
 
     private int getDirectionTrainCameWith(int x0, int y0, int x1, int y1){
         Queue<Point> queue = new LinkedList<Point>();
-        Point startPoint = new Point(x0, y0);
+        final Point startPoint = new Point(x0, y0);
         queue.add(startPoint);
 
         int[][] arr = railMap.getMinusOneFilledArray();
@@ -142,10 +142,14 @@ public class Train extends Thread implements Runnable {
             if(arr[p.x][p.y] != -1){
                 continue;
             }
-            arr[p.x][p.y] = 1; //mark visited
+            arr[p.x][p.y] = 1000; //mark visited
             for (int dir = 0; dir < 4; dir++) {
                 int x = p.x + DirectionArrays.xDirs[dir];
                 int y = p.y + DirectionArrays.yDirs[dir];
+                
+                if(x < 0 || x >= arr.length || y < 0 || y >= arr[0].length){
+                    continue; // so we don't search outside the bounds
+                }
 
                 if(x == x1 && y == y1){
                     return dir;
