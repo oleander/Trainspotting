@@ -1,28 +1,80 @@
 
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 public class Sensor {
+
     private Point position;
+    private RailMap railMap;
+
+    public Sensor(Point position, RailMap railMap) {
+        this.position = position;
+        this.railMap = railMap;
+    }
 
     //given direction return action
-    public RunnableTrain getAction(int direction) {
-        return new RunnableTrain() {
+    public RunnableTrain getAction(int dir0) {
+        int[][] array = railMap.getMinusOneFilledArray();
+        int x = position.x, y = position.y;
+        int revDir0 = (dir0 + 2) % 4;
+        //array[x + DirectionArrays.xDirs[revDir0]][y + DirectionArrays.yDirs[revDir0]] = 1000;
 
-            public void run(Train t) {
-                t.stopWaitTurnAround();
+        ArrayList<Point> interestingPoints = new ArrayList<Point>();
+        RunnableTrain actions = Tools.getEmptyAction();
+
+        int dir = dir0;
+        Sensor foundSensor = null;
+        while (array[x][y] == -1) {
+            final int xf = x;
+            final int yf = y;
+            if (railMap.isKorsning(x, y)) {
+                interestingPoints.add(new Point(x, y));
             }
-        };
+            array[x][y] = dir;
+            x += DirectionArrays.xDirs[dir];
+            y += DirectionArrays.yDirs[dir];
+            foundSensor = railMap.findSensor(x, y);
+            if(foundSensor != null)
+                break;
+        }
+        final Sensor fSensor = foundSensor;
+        for (final Point point : interestingPoints) {
+            if(railMap.isKorsning(point.x, point.y)){
+                actions = Tools.plusActions(actions, new RunnableTrain() {
+                    public void run(Train t) {
+                        final Semaphore s = GlobalSemaphores.findOrCreate(new Point(point.x, point.y));
+                        t.stopTrain();
+                        try {
+                            s.acquire();
+                            t.say("Aquired semaphore " + s);
+                        } catch (InterruptedException ex) {
+                            t.say("error when aquire semaphore " + ex.getMessage());
+                        }
+                        t.setMaxVelocity();
+                        t.addOneTimeAction(fSensor, new RunnableTrain() {
+
+                            public void run(Train t) {
+                                s.release();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+
+        return actions;
         /*
          * We write lambda functions this way
         return new RunnableTrain() {
-            public void run(Train t) {
-                
-            }
+        public void run(Train t) {
+
+        }
         };
          *
          */
     }
-
-    public Sensor(Point position) {
-        this.position = position;
-    }
-
 }

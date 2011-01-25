@@ -7,10 +7,9 @@ import java.util.Scanner;
 public class RailMap {
 
     private int width, height;
-    private boolean[][] array;
+    private boolean[][] array; //true if walkable
     private Sensor[][] sensorArray;
     private ArrayList<Point> trainList;
-
 
     RailMap(File file) {
         trainList = new ArrayList<Point>();
@@ -60,7 +59,7 @@ public class RailMap {
 
                 array[x][y] = true;
                 sensorArray[x][y] =
-                        isSensor ? new Sensor(new Point(x, y)) : null;
+                        isSensor ? new Sensor(new Point(x, y), this) : null;
             } else {
                 trainList.add(new Point(x, y));
             }
@@ -97,7 +96,7 @@ public class RailMap {
         int[][] arr = new int[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                arr[i][j] = array[i][j] ? 1000 : -1;
+                arr[i][j] = array[i][j] ? -1 : 1000; // -1 if available
             }
         }
 
@@ -120,11 +119,38 @@ public class RailMap {
         return width;
     }
 
-    public int getNumTrains(){
+    public int getNumTrains() {
         return trainList.size();
     }
 
-    public Point trainStartPos(int id){
-        return trainList.get(id-1);
+    public Point trainStartPos(int id) {
+        return trainList.get(id - 1);
+    }
+
+    public void printAsciiMap() {
+        System.err.println("");
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                if (sensorArray[i][j] != null) {
+                    System.err.print("S");
+                } else if (array[i][j]) {
+                    System.err.print(" ");
+                } else {
+                    System.err.print("#");
+                }
+            }
+            System.err.println("");
+        }
+    }
+
+    public boolean isKorsning(int x0, int y0){
+        boolean ok = array[x0][y0];
+        for (int dir = 0; dir < 4; dir++) {
+            int x = x0 + DirectionArrays.xDirs[dir];
+            int y = y0 + DirectionArrays.yDirs[dir];
+            ok &= array[x][y];
+        }
+
+        return ok;
     }
 }

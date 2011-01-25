@@ -19,11 +19,12 @@ public final class Lab1 {
     private void startTrains() {
 //        final RailMap rm = new RailMap(new File("build/classes/bana"));
         final RailMap rm = new RailMap(new File("bana"));
-
-        Train t = new Train(rm, 20, 1);
-        t.setMaxVelocity();
-
-        t.start();
+        rm.printAsciiMap();
+        
+        for(int tid = 1; tid <= rm.getNumTrains(); tid++) {
+            Train t = new Train(rm, 20, tid);
+            t.start();
+        }
 
         new Thread(new Runnable() {
 

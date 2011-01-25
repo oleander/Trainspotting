@@ -15,7 +15,7 @@ public class GlobalSemaphores {
         } else {
             Semaphore s = new Semaphore(1, true);
             semaphores.put(p, s);
-            System.err.println("Created new semaphore " + s);
+            System.err.println("Created new semaphore at " + p + ":" + s);
             return s;
         }
     }

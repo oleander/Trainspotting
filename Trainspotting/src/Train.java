@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class Train extends Thread implements Runnable {
+public final class Train extends Thread implements Runnable {
 
     private RailMap railMap;
     private Map<Sensor, RunnableTrain> pendingActions;
@@ -29,7 +29,9 @@ public class Train extends Thread implements Runnable {
 
         this.pendingActions = new HashMap<Sensor, RunnableTrain>();
         goingForwards = true;
+        setMaxVelocity();
         // initialisera första blockaden
+
 
     }
 
@@ -41,13 +43,7 @@ public class Train extends Thread implements Runnable {
         if (pendingActions.containsKey(s)) {
             // already exists one, must concatenate existing with new action.
             final RunnableTrain prevAction = pendingActions.get(s);
-            pendingActions.put(s, new RunnableTrain() {
-
-                public void run(Train t) {
-                    prevAction.run(t);
-                    action.run(t);
-                }
-            });
+            pendingActions.put(s, Tools.plusActions(prevAction, action));
         } else {
             pendingActions.put(s, action);
         }
@@ -67,8 +63,12 @@ public class Train extends Thread implements Runnable {
                 System.err.println("train got interrupted waiting for sensor!");
             }
 
+            final int x = event.getXpos();
+            final int y = event.getYpos();
+            System.err.println(x);
+            System.err.println(y);
             Sensor sensor =
-                    railMap.getSensorArray()[event.getXpos()][event.getYpos()];
+                    railMap.getSensorArray()[x][y];
             if (event.getStatus() == SensorEvent.INACTIVE) {
                 continue; // TODO: for now completely ignoring inactive events.
             } else {
@@ -77,7 +77,7 @@ public class Train extends Thread implements Runnable {
                     pendingActions.remove(sensor);
                 }
                 int direction =
-                        getDirectionTrainCameWith(x0, y0, event.getXpos(), event.getYpos());
+                        getDirectionTrainCameWith(x0, y0, x, y);
                 sensor.getAction(direction).run(this);
             }
         }
@@ -131,6 +131,7 @@ public class Train extends Thread implements Runnable {
     }
 
     private int getDirectionTrainCameWith(int x0, int y0, int x1, int y1){
+        System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 +")");
         Queue<Point> queue = new LinkedList<Point>();
         final Point startPoint = new Point(x0, y0);
         queue.add(startPoint);
