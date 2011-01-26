@@ -22,7 +22,7 @@ public final class Lab1 {
         rm.printAsciiMap();
         
         for(int tid = 1; tid <= rm.getNumTrains(); tid++) {
-            Train t = new Train(rm, 20, tid);
+            Train t = new Train(rm, 10, tid);
             t.start();
         }
 

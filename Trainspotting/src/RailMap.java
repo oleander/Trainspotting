@@ -2,12 +2,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RailMap {
 
     private int width, height;
-    private boolean[][] array; //true if walkable
+    private int[][] array; //true if walkable
     private Sensor[][] sensorArray;
     private ArrayList<Point> trainList;
 
@@ -35,7 +39,7 @@ public class RailMap {
 
         width = sc.nextInt();
         height = sc.nextInt();
-        array = new boolean[width][height];
+        createArray();
         sensorArray = new Sensor[width][height];
         sc.nextLine(); //remove eempty dimensions-line
 
@@ -57,54 +61,34 @@ public class RailMap {
                 //int numRails = Integer.parseInt(lines[3]); // not needed now
                 boolean isSensor = sline[sline.length - 1].equals("Sensor");
 
-                array[x][y] = true;
+                //array[x][y] = true;
+                int numRails = Integer.parseInt(sline[3]);
+                for (int i = 0; i < numRails; i++) {
+                    addRail(x, y, sline[4 + i]);
+                }
+
                 sensorArray[x][y] =
                         isSensor ? new Sensor(new Point(x, y), this) : null;
             } else {
                 trainList.add(new Point(x, y));
             }
         }
-        // RegExp attempt
-        /*
-        Pattern railPattern =
-        Pattern.compile("R\\s+(\\d+)\\s+(\\d+)\\s+\\d+\\s+.+(NoSensor|Sensor)\\s*$");
-
-        while (sc.hasNext()) {
-        String line = sc.nextLine().trim();
-        if (line.equals(".")) {
-        break;
-        }
-
-        Matcher m = railPattern.matcher(line);
-
-        while(m.find()){
-        System.out.println(m.group(1));
-        System.out.println(m.group(2));
-        System.out.println(m.group(3));
-        //Integer.parseInt()
-        }
-        }
-         *
-         */
     }
 
     /**
-     * Get a array you can search the railway in
+     * Get a array you can search the railway in. Doesn't contain switch-data
      * @return array to search in. It's a copy, so you can edit it
      */
-    public int[][] getMinusOneFilledArray() {
-        int[][] arr = new int[width][height];
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                arr[i][j] = array[i][j] ? -1 : 1000; // -1 if available
+    public boolean[][] getSearchArray() {
+        boolean[][] arr =
+                new boolean[transformToDetailed(width)][transformToDetailed(height)];
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[0].length; j++) {
+                arr[i][j] = array[i][j] > 0; // true if can walk on
             }
         }
 
         return arr;
-    }
-
-    public boolean[][] getArray() {
-        return array;
     }
 
     public int getHeight() {
@@ -133,7 +117,7 @@ public class RailMap {
             for (int i = 0; i < width; i++) {
                 if (sensorArray[i][j] != null) {
                     System.err.print("S");
-                } else if (array[i][j]) {
+                } else if (array[i][j] > 0) {
                     System.err.print(" ");
                 } else {
                     System.err.print("#");
@@ -143,14 +127,169 @@ public class RailMap {
         }
     }
 
-    public boolean isKorsning(int x0, int y0){
-        boolean ok = array[x0][y0];
+    public boolean isCrossing(Point p) {
+        int x0 = transformToDetailed(p.x);
+        int y0 = transformToDetailed(p.y);
+        boolean ok = array[x0][y0] > 0;
         for (int dir = 0; dir < 4; dir++) {
             int x = x0 + DirectionArrays.xDirs[dir];
             int y = y0 + DirectionArrays.yDirs[dir];
-            ok &= array[x][y];
+            if(!validDetailedCoordinate(x, y)){
+                continue;
+            }
+            ok &= array[x][y] > 0;
         }
 
         return ok;
+    }
+
+    public boolean isSwitch(Point p) {
+        int x0 = transformToDetailed(p.x);
+        int y0 = transformToDetailed(p.y);
+        int numAdjacent = 0;
+        for (int dir = 0; dir < 4; dir++) {
+            int x = x0 + DirectionArrays.xDirs[dir];
+            int y = y0 + DirectionArrays.yDirs[dir];
+            if(!validDetailedCoordinate(x, y)){
+                continue;
+            }
+            numAdjacent += array[x][y] > 0 ? 1 : 0;
+        }
+
+        return numAdjacent == 3;
+    }
+
+    // TODO: this isn't valid for new array type
+    public boolean canMoveInDirection(Point from, int dir) {
+        int x = transformToDetailed(from.x);
+        int y = transformToDetailed(from.y);
+        x += DirectionArrays.xDirs[dir];
+        y += DirectionArrays.yDirs[dir];
+        return validDetailedCoordinate(x, y) && array[x][y] > 0;
+    }
+
+    public SearchResult getNextCrossing(Point from, int dir0) {
+        return searchForPredicate(from, dir0, new PointCond() {
+
+            public boolean ok(Point p) {
+                return isCrossing(p);
+            }
+        });
+    }
+
+    public SearchResult getNextSwitch(Point from, int dir0) {
+        return searchForPredicate(from, dir0, new PointCond() {
+
+            public boolean ok(Point p) {
+                return isSwitch(p);
+            }
+        });
+    }
+
+    SearchResult getNextSensor(Point from, int dir0) {
+        return searchForPredicate(from, dir0, new PointCond() {
+
+            public boolean ok(Point p) {
+                return getSensor(p) != null;
+            }
+        });
+    }
+
+    public Sensor getSensor(Point p) {
+        return sensorArray[p.x][p.y];
+    }
+
+    private SearchResult searchForPredicate(Point from, int dir, PointCond pc) {
+        Point now = new Point(from.x, from.y);
+        int dist = 0;
+        while (!pc.ok(now) || now.equals(from)) {
+            dir = getPrefferedDirection(now, dir);
+            //System.err.println(dir);
+            if (dir == -1) {
+                return null;
+            }
+            now.moveInDirection(dir);
+            dist++;
+        }
+        return new SearchResult(now, dir, dist);
+    }
+
+    private int getPrefferedDirection(Point now, int dir) {
+        int[] preferredDirs = {dir, (dir + 1) % 4, (dir - 1 + 4) % 4};
+        for (int d : preferredDirs) {
+            if (canMoveInDirection(now, d)) {
+                return d;
+            }
+        }
+        return -1;
+    }
+
+    private boolean validDetailedCoordinate(int x, int y) {
+        return !(x <= 0 || y <= 0 || x >= transformToDetailed(width) || y >= transformToDetailed(height));
+    }
+
+    private interface PointCond {
+
+        public boolean ok(Point p);
+    }
+
+    public int getDirectionTrainCameWith(Point p0, Point p1) {
+        int x0 = p0.x, y0 = p0.y, x1 = p1.x, y1 = p1.y;
+        System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 + ")");
+        Queue<Point> queue = new LinkedList<Point>();
+        final Point startPoint = new Point(x0, y0);
+        queue.add(startPoint);
+
+        boolean[][] canWalkOn = getSearchArray();
+
+        while (!queue.isEmpty()) {
+            Point p = queue.poll();
+            if (!canWalkOn[p.x][p.y]) {
+                continue;
+            }
+            canWalkOn[p.x][p.y] = false; //mark visited
+            for (int dir = 0; dir < 4; dir++) {
+                int x = p.x + DirectionArrays.xDirs[dir];
+                int y = p.y + DirectionArrays.yDirs[dir];
+
+                if (x < 0 || x >= canWalkOn.length || y < 0 || y >= canWalkOn[0].length) {
+                    continue; // so we don't search outside the bounds
+                }
+
+                if (x == x1 && y == y1) {
+                    return dir;
+                }
+                queue.add(new Point(x, y));
+            }
+        }
+
+        System.err.println("bfs failed!");
+        return -123;
+    }
+
+    // TODO fix so it works for 2x+1
+    private static int transformToDetailed(int xORy) {
+        return xORy;
+        //return xORy * 2 + 1;
+    }
+
+    private static Point transformToDetailed(Point p) {
+        return new Point(transformToDetailed(p.x), transformToDetailed(p.y));
+    }
+
+    // TODO fix so it works for 2x+1
+    private void createArray() {
+        int X = transformToDetailed(width);
+        int Y = transformToDetailed(height);
+
+        array = new int[X][Y];
+
+        // TODO add loop for filling in middle-ones!!!
+    }
+
+    // TODO fix so it works for 2x+1
+    private void addRail(int x, int y, String string) {
+        array[x][y] = 1;
+        //throw new UnsupportedOperationException("Not yet implemented");
     }
 }

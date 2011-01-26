@@ -8,6 +8,13 @@ public class Point {
     }
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    
+
+    @Override
     public String toString(){
         return "(" + x + ", " + y + ")";
     }
@@ -36,5 +43,10 @@ public class Point {
         hash = 41 * hash + this.x;
         hash = 41 * hash + this.y;
         return hash;
+    }
+
+    void moveInDirection(int dir) {
+        x += DirectionArrays.xDirs[dir];
+        y += DirectionArrays.yDirs[dir];
     }
 }
