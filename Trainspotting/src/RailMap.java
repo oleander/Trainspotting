@@ -128,22 +128,18 @@ public class RailMap {
     }
 
     public boolean isCrossing(Point p) {
-        int x0 = transformToDetailed(p.x);
-        int y0 = transformToDetailed(p.y);
-        boolean ok = array[x0][y0] > 0;
-        for (int dir = 0; dir < 4; dir++) {
-            int x = x0 + DirectionArrays.xDirs[dir];
-            int y = y0 + DirectionArrays.yDirs[dir];
-            if (!validDetailedCoordinate(x, y)) {
-                continue;
-            }
-            ok &= array[x][y] > 0;
-        }
-
-        return ok;
+        return isHavingExactAdjacent(p, 4);
     }
 
     public boolean isSwitch(Point p) {
+        return isHavingExactAdjacent(p, 3);
+    }
+
+    public boolean isEnd(Point p) {
+        return isHavingExactAdjacent(p, 1);
+    }
+
+    private boolean isHavingExactAdjacent(Point p, int wantedAdjacent){
         int x0 = transformToDetailed(p.x);
         int y0 = transformToDetailed(p.y);
         int numAdjacent = 0;
@@ -156,7 +152,7 @@ public class RailMap {
             numAdjacent += array[x][y] > 0 ? 1 : 0;
         }
 
-        return numAdjacent == 3;
+        return numAdjacent == wantedAdjacent;
     }
 
     // TODO: this isn't valid for new array type
@@ -186,6 +182,15 @@ public class RailMap {
         });
     }
 
+    public SearchResult getNextSwitchOrEnd(Point from, int dir0) {
+        return searchForPredicate(from, dir0, new PointCond() {
+
+            public boolean ok(Point p) {
+                return isSwitch(p) || isEnd(p);
+            }
+        });
+    }
+
     SearchResult getNextSensor(Point from, int dir0) {
         return searchForPredicate(from, dir0, new PointCond() {
 
@@ -194,6 +199,7 @@ public class RailMap {
             }
         });
     }
+
 
     public Sensor getSensor(Point p) {
         return sensorArray[p.x][p.y];
@@ -283,12 +289,13 @@ public class RailMap {
 
         array = new int[X][Y];
 
+        /*
         for (int x = 1; x < array.length; x += 2) {
             for (int y = 1; y < array[0].length; y += 2) {
                 array[x][y] = 1;
             }
         }
-
+        */
         // TODO add loop for filling in middle-ones!!!
     }
 
@@ -296,10 +303,10 @@ public class RailMap {
     // DONE (i think)
     private void addRail(int x, int y, String rail) {
         // array[x][y] = 1; old implementation, removed
-
         x = transformToDetailed(x);
         y = transformToDetailed(y);
 
+        array[x][y] = 1;
         if (rail.equals("HorizontalRail")) {
             array[x + 1][y]++;
             array[x - 1][y]++;

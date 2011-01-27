@@ -108,6 +108,16 @@ public class Sensor {
     }
 
     private RunnableTrain getSegementSemaphorAction(int dir0) {
+        final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
+        final SearchResult nextSwitch = railMap.getNextSwitch(position, dir0);
+
+        if(nextSensor == null || nextSwitch == null){
+            return Tools.getEmptyAction();
+        }
+        if(nextSwitch.distance > nextSensor.distance){
+            return Tools.getEmptyAction();
+        }
+
         return Tools.getEmptyAction();
     }
 }
