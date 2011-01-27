@@ -18,9 +18,15 @@ public final class Lab1 {
 //        final RailMap rm = new RailMap(new File("build/classes/bana"));
         final RailMap rm = new RailMap(new File("bana"));
         rm.printAsciiMap();
-        
+        if(rm.isEnd(new Point(3, 7))){
+            System.err.println("isEnd");
+        }
+        if(rm.isSwitch(new Point(7, 7))){
+            System.err.println("isSwitch");
+        }
+
         for(int tid = 1; tid <= rm.getNumTrains(); tid++) {
-            Train t = new Train(rm, 10, tid);
+            Train t = new Train(rm, tid == 1 ? 10 : 0, tid);
             t.start();
         }
 

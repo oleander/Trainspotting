@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public final class Train extends Thread implements Runnable {
 
     private RailMap railMap;
-    private Map<Sensor, RunnableTrain> pendingActions;
+    private Map<Sensor, Runnable> pendingActions;
     private int currentVelocity;
     private int maxVelocity;
     private int id;
@@ -25,7 +25,7 @@ public final class Train extends Thread implements Runnable {
         this.id = id;
         this.point0 = railMap.trainStartPos(id);
 
-        this.pendingActions = new HashMap<Sensor, RunnableTrain>();
+        this.pendingActions = new HashMap<Sensor, Runnable>();
         goingForwards = true;
         setMaxVelocity();
         // initialisera första blockaden
@@ -37,10 +37,10 @@ public final class Train extends Thread implements Runnable {
      * Run an action next time coming to a sensor (or leaving the sensor?)
      */
     // TODO: decide wheater it is for entering or leaving sensor
-    public void addOneTimeAction(Sensor s, final RunnableTrain action) {
+    public void addOneTimeAction(Sensor s, final Runnable action) {
         if (pendingActions.containsKey(s)) {
             // already exists one, must concatenate existing with new action.
-            final RunnableTrain prevAction = pendingActions.get(s);
+            final Runnable prevAction = pendingActions.get(s);
             pendingActions.put(s, Tools.plusActions(prevAction, action));
         } else {
             pendingActions.put(s, action);
@@ -68,14 +68,14 @@ public final class Train extends Thread implements Runnable {
                     railMap.getSensorArray()[x][y];
             if (event.getStatus() == SensorEvent.INACTIVE) {
                 if (pendingActions.containsKey(sensor)) {
-                    pendingActions.get(sensor).run(this);
+                    pendingActions.get(sensor).run();
                     pendingActions.remove(sensor);
                 }
             } else {
                 int direction =
                         railMap.getDirectionTrainCameWith(point0, point);
                 System.err.println("Hitted with direction " + direction);
-                sensor.getAction(direction).run(this);
+                sensor.getAction(direction, this);
                 point0 = point;
             }
         }

@@ -11,66 +11,52 @@ public class Sensor {
     }
 
     //given direction return action
-    public RunnableTrain getAction(int dir0) {
-        RunnableTrain a1 = getTurnAroundAction(dir0);
-        RunnableTrain a2 = getCrossingAction(dir0);
-        RunnableTrain a3 = getSegementSemaphorAction(dir0);
-
-        return Tools.plusActions(a1, Tools.plusActions(a2, a3));
+    public void getAction(int dir0, final Train t) {
+        getTurnAroundAction(dir0, t);
+        getCrossingAction(dir0, t);
+         getSegementSemaphorAction(dir0, t);
     }
 
-    private RunnableTrain getCrossingAction(int dir0) {
+    private void getCrossingAction(int dir0, final Train t) {
         final SearchResult nextCross = railMap.getNextCrossing(position, dir0);
         final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
 
         if (nextCross == null || nextSensor == null) {
-            return Tools.getEmptyAction();
+            return ;
         }
 
         if (nextCross.distance > nextSensor.distance) {
-            return Tools.getEmptyAction();
+            return ;
         }
         
-        return new RunnableTrain() {
-
-            public void run(Train t) {
-                final Semaphore s = GlobalSemaphores.findOrCreate(nextCross.pos);
-                t.waitIfTakenThenGo(s);
-                t.addOneTimeAction(railMap.getSensor(nextSensor.pos), new RunnableTrain() {
-                    public void run(Train t) {
-                        t.releaseSemaphor(s);
-                    }
-                });
+        final Semaphore s = GlobalSemaphores.findOrCreate(nextCross.pos);
+        t.waitIfTakenThenGo(s);
+        t.addOneTimeAction(railMap.getSensor(nextSensor.pos), new Runnable() {
+            public void run() {
+                t.releaseSemaphor(s);
             }
-        };
+        });
+        
     }
 
-    private RunnableTrain getTurnAroundAction(int dir0) {
+    private void getTurnAroundAction(int dir0, Train t) {
         final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
         if(nextSensor == null){
-            return new RunnableTrain() {
-
-                public void run(Train t) {
-                    t.stopWaitTurnAround();
-                }
-            };
-        }
-        else{
-            return Tools.getEmptyAction();
+            t.stopWaitTurnAround();
         }
     }
 
-    private RunnableTrain getSegementSemaphorAction(int dir0) {
+    private void getSegementSemaphorAction(int dir0, final Train t) {
         SearchResult searchSensor = railMap.getNextSensor(position, dir0);
         final SearchResult searchSwitch = railMap.getNextSwitch(position, dir0);
 
         if(searchSensor == null || searchSwitch == null){
-            return Tools.getEmptyAction();
+            return ;
         }
         if(searchSwitch.distance > searchSensor.distance){
             // This means that the current sensor isn't the one nearest
             // the segement-switch
-            return Tools.getEmptyAction();
+            return ;
         }
 
         Sensor nextSensor = railMap.getSensor(searchSensor.pos);
@@ -86,12 +72,12 @@ public class Sensor {
         boolean couldAquire = newSemaphore.tryAcquire();
         if(couldAquire || alterantiveDirection == -1){
             // if alternativeDirection == -1, then we have no choice
-            Train REMOVETHISTRAINLATER = null;
-            REMOVETHISTRAINLATER.waitIfTakenThenGo(newSemaphore);
+            
+            t.waitIfTakenThenGo(newSemaphore);
             railMap.switchSoGivenDirWorks(switchPos, oldDirection, searchSwitch.direction);
             // TODO -- Add switching action
-            REMOVETHISTRAINLATER.addOneTimeAction(nextSensor, new RunnableTrain() {
-                public void run(Train t) {
+            t.addOneTimeAction(nextSensor, new Runnable() {
+                public void run() {
                     t.releaseSemaphor(oldSemaphore);
                 }
             });
@@ -104,12 +90,11 @@ public class Sensor {
             newSemaphore = railMap.getSegmentSemaphor(nextSensor.position);
 
 
-            Train REMOVETHISTRAINLATER = null;
-            REMOVETHISTRAINLATER.waitIfTakenThenGo(newSemaphore);
+            t.waitIfTakenThenGo(newSemaphore);
             railMap.switchSoGivenDirWorks(switchPos, oldDirection, alterantiveDirection);
             // TODO -- Add switching action
-            REMOVETHISTRAINLATER.addOneTimeAction(nextSensor, new RunnableTrain() {
-                public void run(Train t) {
+            t.addOneTimeAction(nextSensor, new Runnable() {
+                public void run() {
                     t.releaseSemaphor(oldSemaphore);
                 }
             });

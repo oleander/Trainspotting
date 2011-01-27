@@ -21,6 +21,13 @@ public class GlobalSemaphores {
     }
 
     static Semaphore findOrCreate2(Point p1, Point p2) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return findOrCreate(sortHackMerge(p1, p2));
+    }
+
+    static Point sortHackMerge(Point p1, Point p2){
+        if(1000*p1.x+p1.y > 1000*p2.x+p2.y){
+            return sortHackMerge(p2, p1);
+        }
+        return new Point(p1.x*1000+p1.y, p2.x*1000+p2.y);
     }
 }

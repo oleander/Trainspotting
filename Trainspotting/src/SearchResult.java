@@ -8,4 +8,9 @@ public class SearchResult {
         this.direction = direction;
         this.distance = distance;
     }
+
+    @Override
+    public String toString(){
+        return "pos = " + pos + ", dir = " + direction + ", dist = " + distance;
+    }
 }

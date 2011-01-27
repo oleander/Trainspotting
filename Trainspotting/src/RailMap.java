@@ -144,12 +144,16 @@ public class RailMap {
         int y0 = transformToDetailed(p.y);
         int numAdjacent = 0;
         for (int dir = 0; dir < 4; dir++) {
-            int x = x0 + DirectionArrays.xDirs[dir];
-            int y = y0 + DirectionArrays.yDirs[dir];
-            if (!validDetailedCoordinate(x, y)) {
-                continue;
+            boolean ok = true;
+            for (int k = 1; k <= 2; k++) {
+                int x = x0 + DirectionArrays.xDirs[dir] * k;
+                int y = y0 + DirectionArrays.yDirs[dir] * k;
+                if (!validDetailedCoordinate(x, y)) {
+                    continue;
+                }
+                ok &= array[x][y] > 0 ;
             }
-            numAdjacent += array[x][y] > 0 ? 1 : 0;
+            numAdjacent += ok ? 1 : 0;
         }
 
         return numAdjacent == wantedAdjacent;
@@ -216,6 +220,7 @@ public class RailMap {
         int dist = 0;
         while (!pc.ok(now) || now.equals(from)) {
             dir = getPrefferedDirection(now, dir);
+            //System.err.println(now);
             //System.err.println(dir);
             if (dir == -1) {
                 return null;
@@ -253,6 +258,8 @@ public class RailMap {
         // on straight
         SearchResult s1 = getNextSwitchOrEnd(position, 0);
         SearchResult s2 = getNextSwitchOrEnd(position, 2);
+        System.err.println("s1 = " + s1);
+        System.err.println("s2 = " + s2);
         Point p1 = s1.pos;
         Point p2 = s2.pos;
 

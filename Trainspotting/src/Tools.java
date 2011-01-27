@@ -8,19 +8,12 @@
  * @author arash
  */
 public class Tools {
-    public static RunnableTrain getEmptyAction(){
-        return new RunnableTrain() {
-            public void run(Train t) {
-                
-            }
-        };
-    }
 
-    public static RunnableTrain plusActions(final RunnableTrain t1, final RunnableTrain t2){
-        return new RunnableTrain() {
-            public void run(Train t) {
-                t1.run(t);
-                t2.run(t);
+    public static Runnable plusActions(final Runnable r1, final Runnable r2){
+        return new Runnable() {
+            public void run() {
+                r1.run();
+                r2.run();
             }
         };
     }
