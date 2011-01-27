@@ -1,8 +1,6 @@
 
 import TSim.*;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class Lab1 {
 
@@ -40,22 +38,4 @@ public final class Lab1 {
         inter.setDebug(true);
     }
 
-    public void startControlTrainForever(int id) {
-        try {
-            TSimInterface inter = TSimInterface.getInstance();
-            inter.setSpeed(id, 10);
-            while (true) {
-                SensorEvent se = null;
-                try {
-                    se = inter.getSensor(id);
-                } catch (CommandException ex) {
-                    Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        } catch (CommandException ex) {
-            Logger.getLogger(Lab1.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }

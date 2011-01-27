@@ -1,4 +1,6 @@
 
+import TSim.CommandException;
+import TSim.TSimInterface;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -110,13 +112,12 @@ public class RailMap {
         return trainList.get(id - 1);
     }
 
+    // doesn't print sensors
     public void printAsciiMap() {
         System.err.println("");
         for (int y = 0; y < array[0].length; y++) {
             for (int x = 0; x < array.length; x++) {                
-                if (false && sensorArray[x][y] != null) {
-                    System.err.print("S");
-                } else if (array[x][y] > 0) {
+                if (array[x][y] > 0) {
                     System.err.print(array[x][y]);
                 } else {
                     System.err.print("#");
@@ -284,6 +285,20 @@ public class RailMap {
             }
         }
         return -1;
+    }
+
+    void switchSoGivenDirWorks(Point switchPos, int dirTrainComesFrom, int dirTrainWantsToGo) {
+        TSimInterface iface = TSimInterface.getInstance();
+        int x = transformToDetailed(switchPos.x);
+        int y = transformToDetailed(switchPos.y);
+        boolean b = dirTrainComesFrom == dirTrainWantsToGo;
+        b ^= array[x+1][y] >= 5;
+        b ^= array[x][y+1] >= 5;
+        try {
+            iface.setSwitch(switchPos.x, switchPos.y, b ? TSimInterface.SWITCH_LEFT : TSimInterface.SWITCH_RIGHT);
+        } catch (CommandException ex) {
+            System.err.println("switch failade");
+        }
     }
 
     private interface PointCond {
