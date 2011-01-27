@@ -113,12 +113,12 @@ public class RailMap {
 
     public void printAsciiMap() {
         System.err.println("");
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
-                if (sensorArray[i][j] != null) {
+        for (int y = 0; y < array[0].length; y++) {
+            for (int x = 0; x < array.length; x++) {                
+                if (false && sensorArray[x][y] != null) {
                     System.err.print("S");
-                } else if (array[i][j] > 0) {
-                    System.err.print(" ");
+                } else if (array[x][y] > 0) {
+                    System.err.print(array[x][y]);
                 } else {
                     System.err.print("#");
                 }
@@ -134,7 +134,7 @@ public class RailMap {
         for (int dir = 0; dir < 4; dir++) {
             int x = x0 + DirectionArrays.xDirs[dir];
             int y = y0 + DirectionArrays.yDirs[dir];
-            if(!validDetailedCoordinate(x, y)){
+            if (!validDetailedCoordinate(x, y)) {
                 continue;
             }
             ok &= array[x][y] > 0;
@@ -150,7 +150,7 @@ public class RailMap {
         for (int dir = 0; dir < 4; dir++) {
             int x = x0 + DirectionArrays.xDirs[dir];
             int y = y0 + DirectionArrays.yDirs[dir];
-            if(!validDetailedCoordinate(x, y)){
+            if (!validDetailedCoordinate(x, y)) {
                 continue;
             }
             numAdjacent += array[x][y] > 0 ? 1 : 0;
@@ -267,10 +267,9 @@ public class RailMap {
         return -123;
     }
 
-    // TODO fix so it works for 2x+1
     private static int transformToDetailed(int xORy) {
-        return xORy;
-        //return xORy * 2 + 1;
+        //return xORy; //old
+        return xORy * 2 + 1;
     }
 
     private static Point transformToDetailed(Point p) {
@@ -284,12 +283,36 @@ public class RailMap {
 
         array = new int[X][Y];
 
+        for (int x = 1; x < array.length; x += 2) {
+            for (int y = 1; y < array[0].length; y += 2) {
+                array[x][y] = 1;
+            }
+        }
+
         // TODO add loop for filling in middle-ones!!!
     }
 
     // TODO fix so it works for 2x+1
-    private void addRail(int x, int y, String string) {
-        array[x][y] = 1;
-        //throw new UnsupportedOperationException("Not yet implemented");
+    // DONE (i think)
+    private void addRail(int x, int y, String rail) {
+        // array[x][y] = 1; old implementation, removed
+
+        x = transformToDetailed(x);
+        y = transformToDetailed(y);
+
+        if (rail.equals("HorizontalRail")) {
+            array[x + 1][y]++;
+            array[x - 1][y]++;
+        } else if (rail.equals("VerticalRail")) {
+            array[x][y + 1]++;
+            array[x][y - 1]++;
+        } else {
+            for (int dir = 0; dir < 4; dir++) {
+                if (rail.indexOf(DirectionArrays.dirNames[dir]) >= 0) {
+                    array[x + DirectionArrays.xDirs[dir]]
+                         [y + DirectionArrays.yDirs[dir]]+=5;
+                }
+            }
+        }
     }
 }

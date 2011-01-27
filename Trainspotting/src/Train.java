@@ -112,7 +112,7 @@ public final class Train extends Thread implements Runnable {
         stopTrain();
         goingForwards ^= true; // turn direction
         try {
-            sleep(100);
+            sleep(400);
         } catch (InterruptedException ex) {
             Logger.getLogger(Train.class.getName()).log(Level.SEVERE, null, ex);
         }
