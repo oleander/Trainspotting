@@ -29,7 +29,7 @@ public final class Train extends Thread implements Runnable {
         goingForwards = true;
         setMaxVelocity();
         // initialisera första blockaden
-
+        trainAcquireSemaphor(railMap.getSegmentSemaphor(point0));
 
     }
 
@@ -67,14 +67,15 @@ public final class Train extends Thread implements Runnable {
             Sensor sensor =
                     railMap.getSensorArray()[x][y];
             if (event.getStatus() == SensorEvent.INACTIVE) {
+            } else {
+
                 if (pendingActions.containsKey(sensor)) {
                     pendingActions.get(sensor).run();
                     pendingActions.remove(sensor);
                 }
-            } else {
                 int direction =
                         railMap.getDirectionTrainCameWith(point0, point);
-                System.err.println("Hitted with direction " + direction);
+                say("Hitted with direction " + direction);
                 sensor.getAction(direction, this);
                 point0 = point;
             }
@@ -99,7 +100,7 @@ public final class Train extends Thread implements Runnable {
     }
 
     public void say(String msg) {
-        System.err.println("Train " + id + " says: " + msg);
+        //System.err.println("Train " + id + " says: " + msg);
     }
 
     public void stopTrain() {
@@ -138,9 +139,12 @@ public final class Train extends Thread implements Runnable {
     }
 
     public void waitIfTakenThenGo(Semaphore s) {
-        stopTrain();
-        trainAcquireSemaphor(s);
-        setMaxVelocity();
+        boolean aquired = s.tryAcquire();
+        if (!aquired) {
+            stopTrain();
+            trainAcquireSemaphor(s);
+            setMaxVelocity();
+        }
     }
 
     void releaseSemaphor(Semaphore s) {

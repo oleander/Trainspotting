@@ -26,7 +26,7 @@ public final class Lab1 {
         }
 
         for(int tid = 1; tid <= rm.getNumTrains(); tid++) {
-            Train t = new Train(rm, tid == 1 ? 10 : 0, tid);
+            Train t = new Train(rm, tid == 1 ? 10 : 10, tid);
             t.start();
         }
 
@@ -41,7 +41,7 @@ public final class Lab1 {
     public void configInterface() {
         TSimInterface inter = TSimInterface.getInstance();
 
-        inter.setDebug(true);
+        inter.setDebug(false);
     }
 
 }

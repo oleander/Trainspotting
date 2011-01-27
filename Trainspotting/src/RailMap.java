@@ -201,11 +201,11 @@ public class RailMap {
         });
     }
 
-    SearchResult getNextSensor(Point from, int dir0) {
+    SearchResult getNextSensor(final Point from, int dir0) {
         return searchForPredicate(from, dir0, new PointCond() {
 
             public boolean ok(Point p) {
-                return getSensor(p) != null;
+                return !from.equals(p) && getSensor(p) != null;
             }
         });
     }
@@ -218,7 +218,7 @@ public class RailMap {
     private SearchResult searchForPredicate(Point from, int dir, PointCond pc) {
         Point now = new Point(from.x, from.y);
         int dist = 0;
-        while (!pc.ok(now) || now.equals(from)) {
+        while (!pc.ok(now)) {
             dir = getPrefferedDirection(now, dir);
             //System.err.println(now);
             //System.err.println(dir);
@@ -231,10 +231,23 @@ public class RailMap {
         return new SearchResult(now, dir, dist);
     }
 
-    private int getPrefferedDirection(Point now, int dir) {
+    private int getPrefferedDirection(Point p, int dir) {
+        int x = transformToDetailed(p.x);
+        int y = transformToDetailed(p.y);
         int[] preferredDirs = {dir, (dir + 1) % 4, (dir - 1 + 4) % 4};
+
+        // following if statement is for "t-korsning", it should take which is
+        // rail-ically able
+        if(array[x+DirectionArrays.xDirs[preferredDirs[1]]]
+                [y+DirectionArrays.yDirs[preferredDirs[1]]] <
+           array[x+DirectionArrays.xDirs[preferredDirs[2]]]
+                [y+DirectionArrays.yDirs[preferredDirs[2]]]){
+            int temp = preferredDirs[1];
+            preferredDirs[1] = preferredDirs[2];
+            preferredDirs[2] = temp;
+        }
         for (int d : preferredDirs) {
-            if (canMoveInDirection(now, d)) {
+            if (canMoveInDirection(p, d)) {
                 return d;
             }
         }
@@ -250,7 +263,8 @@ public class RailMap {
     }
 
     Semaphore getSegmentSemaphor(Point position) {
-        if(!isHavingExactAdjacent(position, 2)){
+        if(!isHavingExactAdjacent(position, 2) && !isEnd(position)){
+            System.err.println("position = " + position);
             throw new AssertionError();
         }
         // we can give senseless directions because it will prioritize different
@@ -258,10 +272,16 @@ public class RailMap {
         // on straight
         SearchResult s1 = getNextSwitchOrEnd(position, 0);
         SearchResult s2 = getNextSwitchOrEnd(position, 2);
-        System.err.println("s1 = " + s1);
-        System.err.println("s2 = " + s2);
+//        System.err.println("s1 = " + s1);
+//        System.err.println("s2 = " + s2);
         Point p1 = s1.pos;
         Point p2 = s2.pos;
+
+        // This is so we can see distance between semaphores that start and
+        // stop at exact same points, yet are different tracks
+        // (like orig bana in middle)
+        p1.x += s1.direction*1000;
+        p2.x += s2.direction*1000;
 
         return GlobalSemaphores.findOrCreate2(p1, p2);
     }
@@ -295,12 +315,16 @@ public class RailMap {
     }
 
     void switchSoGivenDirWorks(Point switchPos, int dirTrainComesFrom, int dirTrainWantsToGo) {
+        System.err.println(switchPos);
+        System.err.println(dirTrainComesFrom);
+        System.err.println(dirTrainWantsToGo);
         TSimInterface iface = TSimInterface.getInstance();
         int x = transformToDetailed(switchPos.x);
         int y = transformToDetailed(switchPos.y);
-        boolean b = dirTrainComesFrom == dirTrainWantsToGo;
+        boolean b = dirTrainComesFrom != dirTrainWantsToGo;
         b ^= array[x+1][y] >= 5;
         b ^= array[x][y+1] >= 5;
+        b ^= array[x][y-1] > 0 && array[x][y+1] > 0;
         try {
             iface.setSwitch(switchPos.x, switchPos.y, b ? TSimInterface.SWITCH_LEFT : TSimInterface.SWITCH_RIGHT);
         } catch (CommandException ex) {
@@ -318,7 +342,7 @@ public class RailMap {
         int y0 = transformToDetailed(p0.y);
         int x1 = transformToDetailed(p1.x);
         int y1 = transformToDetailed(p1.y);
-        System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 + ")");
+        //System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 + ")");
         Queue<Point> queue = new LinkedList<Point>();
         final Point startPoint = new Point(x0, y0);
         queue.add(startPoint);
