@@ -38,7 +38,7 @@ public class Sensor {
                 t.waitIfTakenThenGo(s);
                 t.addOneTimeAction(railMap.getSensor(nextSensor.pos), new RunnableTrain() {
                     public void run(Train t) {
-                        s.release();
+                        t.releaseSemaphor(s);
                     }
                 });
             }
@@ -108,16 +108,55 @@ public class Sensor {
     }
 
     private RunnableTrain getSegementSemaphorAction(int dir0) {
-        final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
-        final SearchResult nextSwitch = railMap.getNextSwitch(position, dir0);
+        SearchResult searchSensor = railMap.getNextSensor(position, dir0);
+        final SearchResult searchSwitch = railMap.getNextSwitch(position, dir0);
 
-        if(nextSensor == null || nextSwitch == null){
+        if(searchSensor == null || searchSwitch == null){
             return Tools.getEmptyAction();
         }
-        if(nextSwitch.distance > nextSensor.distance){
+        if(searchSwitch.distance > searchSensor.distance){
+            // This means that the current sensor isn't the one nearest
+            // the segement-switch
             return Tools.getEmptyAction();
         }
 
-        return Tools.getEmptyAction();
+        Sensor nextSensor = railMap.getSensor(searchSensor.pos);
+        final Semaphore oldSemaphore = railMap.getSegmentSemaphor(position);
+        Semaphore newSemaphore = 
+                railMap.getSegmentSemaphor(nextSensor.position);
+
+        boolean couldAquire = newSemaphore.tryAcquire();
+        if(couldAquire){
+            Train REMOVETHISTRAINLATER = null;
+            REMOVETHISTRAINLATER.waitIfTakenThenGo(newSemaphore);
+            // TODO -- Add switching action
+            REMOVETHISTRAINLATER.addOneTimeAction(nextSensor, new RunnableTrain() {
+                public void run(Train t) {
+                    t.releaseSemaphor(oldSemaphore);
+                }
+            });
+        }else{
+            // Ok, we simply must search again, but taking the other direction
+            // of the switch, hopefully there is another direction
+            Point switchPos = searchSwitch.pos;
+            int oldDirection = searchSwitch.direction;
+            int newDirection = railMap.otherSwitchDirection(switchPos, oldDirection);
+            
+            searchSensor = railMap.getNextSensor(switchPos, newDirection);
+            nextSensor = railMap.getSensor(searchSensor.pos);
+            newSemaphore = railMap.getSegmentSemaphor(nextSensor.position);
+
+
+            Train REMOVETHISTRAINLATER = null;
+            REMOVETHISTRAINLATER.waitIfTakenThenGo(newSemaphore);
+            // TODO -- Add switching action
+            REMOVETHISTRAINLATER.addOneTimeAction(nextSensor, new RunnableTrain() {
+                public void run(Train t) {
+                    t.releaseSemaphor(oldSemaphore);
+                }
+            });
+        }
+
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

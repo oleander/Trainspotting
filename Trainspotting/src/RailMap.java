@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,10 +59,8 @@ public class RailMap {
             int x = Integer.parseInt(sline[1]);
             int y = Integer.parseInt(sline[2]);
             if (sline[0].equals("R")) {
-                //int numRails = Integer.parseInt(lines[3]); // not needed now
                 boolean isSensor = sline[sline.length - 1].equals("Sensor");
 
-                //array[x][y] = true;
                 int numRails = Integer.parseInt(sline[3]);
                 for (int i = 0; i < numRails; i++) {
                     addRail(x, y, sline[4 + i]);
@@ -81,7 +80,7 @@ public class RailMap {
      */
     public boolean[][] getSearchArray() {
         boolean[][] arr =
-                new boolean[transformToDetailed(width)][transformToDetailed(height)];
+                new boolean[array.length][array[0].length];
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr[0].length; j++) {
                 arr[i][j] = array[i][j] > 0; // true if can walk on
@@ -156,12 +155,18 @@ public class RailMap {
     }
 
     // TODO: this isn't valid for new array type
+    // DONE i think
     public boolean canMoveInDirection(Point from, int dir) {
         int x = transformToDetailed(from.x);
         int y = transformToDetailed(from.y);
+        boolean ok = true;
         x += DirectionArrays.xDirs[dir];
         y += DirectionArrays.yDirs[dir];
-        return validDetailedCoordinate(x, y) && array[x][y] > 0;
+        ok &= existingDetailedCoordinate(x, y);
+        x += DirectionArrays.xDirs[dir];
+        y += DirectionArrays.yDirs[dir];
+        ok &= existingDetailedCoordinate(x, y);
+        return  ok;
     }
 
     public SearchResult getNextCrossing(Point from, int dir0) {
@@ -234,13 +239,63 @@ public class RailMap {
         return !(x <= 0 || y <= 0 || x >= transformToDetailed(width) || y >= transformToDetailed(height));
     }
 
+    private boolean existingDetailedCoordinate(int x, int y) {
+        return validDetailedCoordinate(x, y) && array[x][y] > 0;
+    }
+
+    Semaphore getSegmentSemaphor(Point position) {
+        if(!isHavingExactAdjacent(position, 2)){
+            throw new AssertionError();
+        }
+        // we can give senseless directions because it will prioritize different
+        // directions when searching, and we assume this is only called
+        // on straight
+        SearchResult s1 = getNextSwitchOrEnd(position, 0);
+        SearchResult s2 = getNextSwitchOrEnd(position, 2);
+        Point p1 = s1.pos;
+        Point p2 = s2.pos;
+
+        return GlobalSemaphores.findOrCreate2(p1, p2);
+    }
+
+
+    /**
+     * Get `the other` direction train can go with at a switch
+     * Will fail if not a switch or cant take other dir
+     * at switch
+     *
+     * @param switchPos    the position of the switch
+     * @param oldDirection the direction the train comes with
+     * @return -1 if fails, otherwise the direction train can go
+     */
+    int otherSwitchDirection(Point switchPos, int oldDirection) {
+        int revDir = (oldDirection+2)%4;
+        int xCameFrom = transformToDetailed(switchPos.x) + DirectionArrays.xDirs[revDir];
+        int yCameFrom = transformToDetailed(switchPos.y) + DirectionArrays.yDirs[revDir];
+        if(array[xCameFrom][yCameFrom] < 5)
+            return -1;
+
+        for (int unModdedDir = oldDirection+1; unModdedDir < oldDirection+1+4; unModdedDir+=2) {
+            final int x = transformToDetailed(switchPos.x);
+            final int y = transformToDetailed(switchPos.y);
+            int dir = unModdedDir % 4;
+            if(array[x+DirectionArrays.xDirs[dir]][y+DirectionArrays.yDirs[dir]] >= 5){
+                return dir;
+            }
+        }
+        return -1;
+    }
+
     private interface PointCond {
 
         public boolean ok(Point p);
     }
 
     public int getDirectionTrainCameWith(Point p0, Point p1) {
-        int x0 = p0.x, y0 = p0.y, x1 = p1.x, y1 = p1.y;
+        int x0 = transformToDetailed(p0.x);
+        int y0 = transformToDetailed(p0.y);
+        int x1 = transformToDetailed(p1.x);
+        int y1 = transformToDetailed(p1.y);
         System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 + ")");
         Queue<Point> queue = new LinkedList<Point>();
         final Point startPoint = new Point(x0, y0);
@@ -282,21 +337,11 @@ public class RailMap {
         return new Point(transformToDetailed(p.x), transformToDetailed(p.y));
     }
 
-    // TODO fix so it works for 2x+1
     private void createArray() {
         int X = transformToDetailed(width);
         int Y = transformToDetailed(height);
 
         array = new int[X][Y];
-
-        /*
-        for (int x = 1; x < array.length; x += 2) {
-            for (int y = 1; y < array[0].length; y += 2) {
-                array[x][y] = 1;
-            }
-        }
-        */
-        // TODO add loop for filling in middle-ones!!!
     }
 
     // TODO fix so it works for 2x+1

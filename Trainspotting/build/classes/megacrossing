@@ -3,9 +3,9 @@ TrainLineFile 2
 R 0 6 1 HorizontalRail NoSensor
 R 0 10 1 HorizontalRail NoSensor
 R 0 14 1 HorizontalRail NoSensor
-R 1 6 1 HorizontalRail NoSensor
-R 1 10 1 HorizontalRail NoSensor
-R 1 14 1 HorizontalRail NoSensor
+R 1 6 1 HorizontalRail Sensor
+R 1 10 1 HorizontalRail Sensor
+R 1 14 1 HorizontalRail Sensor
 R 2 6 1 HorizontalRail Sensor
 R 2 10 1 HorizontalRail Sensor
 R 2 14 1 HorizontalRail Sensor
@@ -37,13 +37,14 @@ R 5 10 1 HorizontalRail NoSensor
 R 5 14 1 HorizontalRail NoSensor
 R 6 6 1 HorizontalRail Sensor
 R 6 10 1 HorizontalRail Sensor
-R 6 14 1 HorizontalRail NoSensor
+R 6 14 1 HorizontalRail Sensor
 R 7 6 1 HorizontalRail NoSensor
 R 7 10 1 HorizontalRail NoSensor
 R 7 14 1 HorizontalRail NoSensor
 R 8 6 1 HorizontalRail NoSensor
 R 8 10 1 HorizontalRail NoSensor
 R 8 14 1 HorizontalRail NoSensor
+R 9 0 1 VerticalRail NoSensor
 R 9 1 1 VerticalRail NoSensor
 R 9 2 1 VerticalRail NoSensor
 R 9 3 1 VerticalRail Sensor
@@ -78,7 +79,7 @@ R 13 14 1 HorizontalRail NoSensor
 R 14 1 1 VerticalRail NoSensor
 R 14 2 1 VerticalRail NoSensor
 R 14 3 1 VerticalRail Sensor
-R 14 4 1 VerticalRail NoSensor
+R 14 4 1 VerticalRail Sensor
 R 14 5 1 VerticalRail NoSensor
 R 14 6 2 HorizontalRail VerticalRail NoSensor
 R 14 7 1 VerticalRail NoSensor
@@ -116,8 +117,6 @@ R 18 17 1 VerticalRail NoSensor
 R 18 18 1 VerticalRail NoSensor
 R 18 19 1 VerticalRail NoSensor
 R 18 20 1 UpLeftRail NoSensor
-T 1 10 1 Right
-T 9 2 1 Down
 T 1 14 1 Right
 T 4 1 1 Down
 T 9 19 1 Up

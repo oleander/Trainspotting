@@ -19,4 +19,8 @@ public class GlobalSemaphores {
             return s;
         }
     }
+
+    static Semaphore findOrCreate2(Point p1, Point p2) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }

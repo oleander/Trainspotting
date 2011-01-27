@@ -142,4 +142,8 @@ public final class Train extends Thread implements Runnable {
         trainAcquireSemaphor(s);
         setMaxVelocity();
     }
+
+    void releaseSemaphor(Semaphore s) {
+        s.release();
+    }
 }
