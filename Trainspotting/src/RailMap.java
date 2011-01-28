@@ -236,16 +236,20 @@ public class RailMap {
         int y = transformToDetailed(p.y);
         int[] preferredDirs = {dir, (dir + 1) % 4, (dir - 1 + 4) % 4};
 
+        int alternativeSwitchDir = otherSwitchDirection(p, dir);
+        if(alternativeSwitchDir >= 0){
+            preferredDirs[1] = alternativeSwitchDir;
+        }
         // following if statement is for "t-korsning", it should take which is
         // rail-ically able
-        if(array[x+DirectionArrays.xDirs[preferredDirs[1]]]
-                [y+DirectionArrays.yDirs[preferredDirs[1]]] <
-           array[x+DirectionArrays.xDirs[preferredDirs[2]]]
-                [y+DirectionArrays.yDirs[preferredDirs[2]]]){
-            int temp = preferredDirs[1];
-            preferredDirs[1] = preferredDirs[2];
-            preferredDirs[2] = temp;
-        }
+//        if(array[x+DirectionArrays.xDirs[preferredDirs[1]]]
+//                [y+DirectionArrays.yDirs[preferredDirs[1]]] <
+//           array[x+DirectionArrays.xDirs[preferredDirs[2]]]
+//                [y+DirectionArrays.yDirs[preferredDirs[2]]]){
+//            int temp = preferredDirs[1];
+//            preferredDirs[1] = preferredDirs[2];
+//            preferredDirs[2] = temp;
+//        }
         for (int d : preferredDirs) {
             if (canMoveInDirection(p, d)) {
                 return d;
@@ -315,9 +319,9 @@ public class RailMap {
     }
 
     void switchSoGivenDirWorks(Point switchPos, int dirTrainComesFrom, int dirTrainWantsToGo) {
-        System.err.println(switchPos);
-        System.err.println(dirTrainComesFrom);
-        System.err.println(dirTrainWantsToGo);
+//        System.err.println(switchPos);
+//        System.err.println(dirTrainComesFrom);
+//        System.err.println(dirTrainWantsToGo);
         TSimInterface iface = TSimInterface.getInstance();
         int x = transformToDetailed(switchPos.x);
         int y = transformToDetailed(switchPos.y);
@@ -338,6 +342,7 @@ public class RailMap {
     }
 
     // TODO: I'm quite sure this isn't enough!!!
+    // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
     public int getDirectionTrainCameWith(Point p0, Point p1) {
         Queue<Point> queue = new LinkedList<Point>();
         Set<Point> visitedPoints = new HashSet<Point>();
