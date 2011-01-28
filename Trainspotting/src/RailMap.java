@@ -10,8 +10,6 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RailMap {
 
@@ -109,6 +107,13 @@ public class RailMap {
                     System.err.print("#");
                 }
             }
+            System.err.println("");
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                System.err.print(getNumAdjacentDirections(new Point(x, y)));
+            } 
             System.err.println("");
         }
     }
