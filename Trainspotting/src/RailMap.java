@@ -142,20 +142,9 @@ public class RailMap {
     }
 
     private boolean isHavingExactAdjacent(Point p, int wantedAdjacent){
-        int x0 = transformToDetailed(p.x);
-        int y0 = transformToDetailed(p.y);
         int numAdjacent = 0;
         for (int dir = 0; dir < 4; dir++) {
-            boolean ok = true;
-            for (int k = 1; k <= 2; k++) {
-                int x = x0 + DirectionArrays.xDirs[dir] * k;
-                int y = y0 + DirectionArrays.yDirs[dir] * k;
-                if (!validDetailedCoordinate(x, y)) {
-                    continue;
-                }
-                ok &= array[x][y] > 0 ;
-            }
-            numAdjacent += ok ? 1 : 0;
+            numAdjacent += canMoveInDirection(p, dir) ? 1 : 0;
         }
 
         return numAdjacent == wantedAdjacent;
