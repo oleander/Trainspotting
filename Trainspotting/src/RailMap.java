@@ -130,24 +130,24 @@ public class RailMap {
     }
 
     public boolean isCrossing(Point p) {
-        return isHavingExactAdjacent(p, 4);
+        return getNumAdjacentDirections(p) == 4;
     }
 
     public boolean isSwitch(Point p) {
-        return isHavingExactAdjacent(p, 3);
+        return getNumAdjacentDirections(p) == 3;
     }
 
     public boolean isEnd(Point p) {
-        return isHavingExactAdjacent(p, 1);
+        return getNumAdjacentDirections(p) == 1;
     }
 
-    private boolean isHavingExactAdjacent(Point p, int wantedAdjacent){
+    private int  getNumAdjacentDirections(Point p){
         int numAdjacent = 0;
         for (int dir = 0; dir < 4; dir++) {
             numAdjacent += canMoveInDirection(p, dir) ? 1 : 0;
         }
 
-        return numAdjacent == wantedAdjacent;
+        return numAdjacent;
     }
 
     public boolean canMoveInDirection(Point from, int dir) {
@@ -256,7 +256,7 @@ public class RailMap {
     }
 
     Semaphore getSegmentSemaphor(Point position) {
-        if(!isHavingExactAdjacent(position, 2) && !isEnd(position)){
+        if(getNumAdjacentDirections(position) > 2){
             System.err.println("position = " + position);
             throw new AssertionError();
         }
