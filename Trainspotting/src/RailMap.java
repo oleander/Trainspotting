@@ -310,6 +310,7 @@ public class RailMap {
     // TODO: I'm quite sure this isn't enough!!!
     // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
     public int getDirectionTrainCameWith(Point p0, Point p1) {
+        System.err.println("bfsing from " + p0 + " to " + p1);
         Queue<Point> queue = new LinkedList<Point>();
         Set<Point> visitedPoints = new HashSet<Point>();
         queue.add(p0);
@@ -321,13 +322,14 @@ public class RailMap {
             }
             visitedPoints.add(p);//mark visited
             for (int dir = 0; dir < 4; dir++) {
-                if (!canMoveInDirection(p, dir)) {
-                    continue;
-                }
-
                 Point movedPoint = Point.createNewAndMove(p, dir);
                 if (movedPoint.equals(p1)) {
+                    System.err.println("dir = " + dir);
                     return dir;
+                }
+
+                if (!canMoveInDirection(p, dir) || getSensor(movedPoint) != null) {
+                    continue;
                 }
 
                 queue.add(movedPoint);
