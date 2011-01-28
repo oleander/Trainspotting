@@ -100,7 +100,7 @@ public final class Train extends Thread implements Runnable {
     }
 
     public void say(String msg) {
-        //System.err.println("Train " + id + " says: " + msg);
+        System.err.println("Train " + id + " says: " + msg);
     }
 
     public void stopTrain() {

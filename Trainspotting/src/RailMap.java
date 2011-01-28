@@ -330,7 +330,7 @@ public class RailMap {
                     return retDir;
                 }
 
-                if (!canMoveInDirection(p, dir) || getSensor(movedPoint) != null) {
+                if (!canMoveInDirection(p, dir)) {
                     continue;
                 }
 
