@@ -2,7 +2,6 @@
 import TSim.CommandException;
 import TSim.SensorEvent;
 import TSim.TSimInterface;
-import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -78,7 +77,7 @@ public final class Train extends Thread implements Runnable {
                         railMap.getDirectionTrainCameWith(point0, point);
                 say("Hitted with direction " + direction);
                 sensor.getAction(direction, this);
-                point0 = Point.createNewAndMove(point, direction);
+                point0 = point; // Point.createNewAndMove(point, direction);
             }
         }
 

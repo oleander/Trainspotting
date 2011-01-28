@@ -325,7 +325,9 @@ public class RailMap {
                 Point movedPoint = Point.createNewAndMove(p, dir);
                 if (movedPoint.equals(p1)) {
                     System.err.println("dir = " + dir);
-                    return dir;
+                    int retDir = getPrefferedDirection(movedPoint, dir);
+                    System.err.println("retDir = " + retDir);
+                    return retDir;
                 }
 
                 if (!canMoveInDirection(p, dir) || getSensor(movedPoint) != null) {

@@ -1,0 +1,17 @@
+TrainLineFile 2
+20 22
+R 2 11 1 HorizontalRail NoSensor
+R 3 11 1 HorizontalRail NoSensor
+R 4 11 1 HorizontalRail NoSensor
+R 5 11 1 HorizontalRail NoSensor
+R 6 11 1 HorizontalRail Sensor
+R 7 11 1 HorizontalRail NoSensor
+R 8 11 1 HorizontalRail NoSensor
+R 9 11 1 HorizontalRail NoSensor
+R 10 11 1 HorizontalRail Sensor
+R 11 11 1 HorizontalRail NoSensor
+R 12 11 1 HorizontalRail NoSensor
+R 13 11 1 HorizontalRail NoSensor
+R 14 11 1 HorizontalRail NoSensor
+T 13 11 1 Left
+.
