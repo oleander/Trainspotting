@@ -25,8 +25,9 @@ public class RailMap {
         parse(file);
     }
 
-    public Sensor findSensor(int x, int y) {
-        return sensorArray[x][y];
+    
+    public Sensor getSensor(Point p) {
+        return sensorArray[p.x][p.y];
     }
 
     private void parse(File file) {
@@ -183,9 +184,6 @@ public class RailMap {
     }
 
 
-    public Sensor getSensor(Point p) {
-        return sensorArray[p.x][p.y];
-    }
 
     private SearchResult searchForPredicate(Point from, int dir, PointCond pc) {
         Point now = new Point(from.x, from.y);
