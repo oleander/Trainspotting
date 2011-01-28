@@ -25,7 +25,6 @@ public class RailMap {
         parse(file);
     }
 
-    
     public Sensor getSensor(Point p) {
         return sensorArray[p.x][p.y];
     }
@@ -79,7 +78,6 @@ public class RailMap {
         }
     }
 
-
     public int getHeight() {
         return height;
     }
@@ -104,7 +102,7 @@ public class RailMap {
     public void printAsciiMap() {
         System.err.println("");
         for (int y = 0; y < array[0].length; y++) {
-            for (int x = 0; x < array.length; x++) {                
+            for (int x = 0; x < array.length; x++) {
                 if (array[x][y] > 0) {
                     System.err.print(array[x][y]);
                 } else {
@@ -127,7 +125,7 @@ public class RailMap {
         return getNumAdjacentDirections(p) == 1;
     }
 
-    private int  getNumAdjacentDirections(Point p){
+    private int getNumAdjacentDirections(Point p) {
         int numAdjacent = 0;
         for (int dir = 0; dir < 4; dir++) {
             numAdjacent += canMoveInDirection(p, dir) ? 1 : 0;
@@ -138,9 +136,9 @@ public class RailMap {
 
     public boolean canMoveInDirection(Point from, int dir) {
         for (int k = 1; k <= 2; k++) {
-            int x = transformToDetailed(from.x) + DirectionArrays.xDirs[dir]*k;
-            int y = transformToDetailed(from.y) + DirectionArrays.yDirs[dir]*k;
-            if(!existingDetailedCoordinate(x, y)){
+            int x = transformToDetailed(from.x) + DirectionArrays.xDirs[dir] * k;
+            int y = transformToDetailed(from.y) + DirectionArrays.yDirs[dir] * k;
+            if (!existingDetailedCoordinate(x, y)) {
                 return false;
             }
         }
@@ -183,8 +181,6 @@ public class RailMap {
         });
     }
 
-
-
     private SearchResult searchForPredicate(Point from, int dir, PointCond pc) {
         Point now = new Point(from.x, from.y);
         int dist = 0;
@@ -207,7 +203,7 @@ public class RailMap {
         int[] preferredDirs = {dir, (dir + 1) % 4, (dir - 1 + 4) % 4};
 
         int alternativeSwitchDir = otherSwitchDirection(p, dir);
-        if(alternativeSwitchDir >= 0){
+        if (alternativeSwitchDir >= 0) {
             preferredDirs[1] = alternativeSwitchDir;
         }
         // following if statement is for "t-korsning", it should take which is
@@ -237,7 +233,7 @@ public class RailMap {
     }
 
     Semaphore getSegmentSemaphor(Point position) {
-        if(getNumAdjacentDirections(position) > 2){
+        if (getNumAdjacentDirections(position) > 2) {
             System.err.println("position = " + position);
             throw new AssertionError();
         }
@@ -254,12 +250,11 @@ public class RailMap {
         // This is so we can see distance between semaphores that start and
         // stop at exact same points, yet are different tracks
         // (like orig bana in middle)
-        p1.x += s1.direction*1000;
-        p2.x += s2.direction*1000;
+        p1.x += s1.direction * 1000;
+        p2.x += s2.direction * 1000;
 
         return GlobalSemaphores.findOrCreate2(p1, p2);
     }
-
 
     /**
      * Get `the other` direction train can go with at a switch
@@ -271,17 +266,18 @@ public class RailMap {
      * @return -1 if fails, otherwise the direction train can go
      */
     int otherSwitchDirection(Point switchPos, int oldDirection) {
-        int revDir = (oldDirection+2)%4;
+        int revDir = (oldDirection + 2) % 4;
         int xCameFrom = transformToDetailed(switchPos.x) + DirectionArrays.xDirs[revDir];
         int yCameFrom = transformToDetailed(switchPos.y) + DirectionArrays.yDirs[revDir];
-        if(array[xCameFrom][yCameFrom] < 5)
+        if (array[xCameFrom][yCameFrom] < 5) {
             return -1;
+        }
 
-        for (int unModdedDir = oldDirection+1; unModdedDir < oldDirection+1+4; unModdedDir+=2) {
+        for (int unModdedDir = oldDirection + 1; unModdedDir < oldDirection + 1 + 4; unModdedDir += 2) {
             final int x = transformToDetailed(switchPos.x);
             final int y = transformToDetailed(switchPos.y);
             int dir = unModdedDir % 4;
-            if(array[x+DirectionArrays.xDirs[dir]][y+DirectionArrays.yDirs[dir]] >= 5){
+            if (array[x + DirectionArrays.xDirs[dir]][y + DirectionArrays.yDirs[dir]] >= 5) {
                 return dir;
             }
         }
@@ -296,9 +292,9 @@ public class RailMap {
         int x = transformToDetailed(switchPos.x);
         int y = transformToDetailed(switchPos.y);
         boolean b = dirTrainComesFrom != dirTrainWantsToGo;
-        b ^= array[x+1][y] >= 5;
-        b ^= array[x][y+1] >= 5;
-        b ^= array[x][y-1] > 0 && array[x][y+1] > 0;
+        b ^= array[x + 1][y] >= 5;
+        b ^= array[x][y + 1] >= 5;
+        b ^= array[x][y - 1] > 0 && array[x][y + 1] > 0;
         try {
             iface.setSwitch(switchPos.x, switchPos.y, b ? TSimInterface.SWITCH_LEFT : TSimInterface.SWITCH_RIGHT);
         } catch (CommandException ex) {
@@ -350,7 +346,7 @@ public class RailMap {
     private static Point transformToDetailed(Point p) {
         return new Point(transformToDetailed(p.x), transformToDetailed(p.y));
     }
-    
+
     private void addRail(int x, int y, String rail) {
         // array[x][y] = 1; old implementation, removed
         x = transformToDetailed(x);
@@ -366,8 +362,7 @@ public class RailMap {
         } else {
             for (int dir = 0; dir < 4; dir++) {
                 if (rail.indexOf(DirectionArrays.dirNames[dir]) >= 0) {
-                    array[x + DirectionArrays.xDirs[dir]]
-                         [y + DirectionArrays.yDirs[dir]]+=5;
+                    array[x + DirectionArrays.xDirs[dir]][y + DirectionArrays.yDirs[dir]] += 5;
                 }
             }
         }

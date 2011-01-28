@@ -11,11 +11,25 @@ public class Sensor {
         this.railMap = railMap;
     }
 
-    //given direction return action
+    /**
+     * When hitting this sensor, trains should call this with the direction
+     * they came with, then a suitable action will be taken.
+     *
+     * @param dir0 the direction the train comes with
+     * @param t    the train that should perform the actions
+     */
     public void getAction(int dir0, final Train t) {
         getTurnAroundAction(dir0, t);
         getCrossingAction(dir0, t);
         getSegementSemaphorAction(dir0, t);
+    }
+
+
+    private void getTurnAroundAction(int dir0, Train t) {
+        final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
+        if (nextSensor == null) {
+            t.stopWaitTurnAround();
+        }
     }
 
     private void getCrossingAction(int dir0, final Train t) {
@@ -39,13 +53,6 @@ public class Sensor {
             }
         });
 
-    }
-
-    private void getTurnAroundAction(int dir0, Train t) {
-        final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
-        if (nextSensor == null) {
-            t.stopWaitTurnAround();
-        }
     }
 
     private void getSegementSemaphorAction(int dir0, final Train t) {
@@ -73,7 +80,7 @@ public class Sensor {
 
         boolean couldAquire = newSemaphore.tryAcquire();
         if (couldAquire) {
-            // if alternativeDirection == -1, then we have no choice
+            // newDirection should preferably be to move "forward" (=oldDirection)
             int newDirection =
                     railMap.canMoveInDirection(switchPos, oldDirection) ? oldDirection : alterantiveDirection;
 
@@ -104,7 +111,7 @@ public class Sensor {
                 }
             });
         } else {
-            // if alternativeDirection == -1, then we must wait for other...
+            // since alternativeDirection == -1, then we must wait for other...
 
             System.err.println("alternative 3");
             t.waitIfTakenThenGo(newSemaphore);
