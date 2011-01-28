@@ -4,9 +4,11 @@ import TSim.TSimInterface;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -335,36 +337,29 @@ public class RailMap {
         public boolean ok(Point p);
     }
 
+    // TODO: I'm quite sure this isn't enough!!!
     public int getDirectionTrainCameWith(Point p0, Point p1) {
-        int x0 = transformToDetailed(p0.x);
-        int y0 = transformToDetailed(p0.y);
-        int x1 = transformToDetailed(p1.x);
-        int y1 = transformToDetailed(p1.y);
-        //System.err.println("bfsing from: (" + x0 + ", " + y0 + ") to (" + x1 + ", " + y1 + ")");
         Queue<Point> queue = new LinkedList<Point>();
-        final Point startPoint = new Point(x0, y0);
-        queue.add(startPoint);
-
-        boolean[][] canWalkOn = getSearchArray();
+        Set<Point> visitedPoints = new HashSet<Point>();
+        queue.add(p0);
 
         while (!queue.isEmpty()) {
             Point p = queue.poll();
-            if (!canWalkOn[p.x][p.y]) {
+            if (visitedPoints.contains(p)) {
                 continue;
             }
-            canWalkOn[p.x][p.y] = false; //mark visited
+            visitedPoints.add(p);//mark visited
             for (int dir = 0; dir < 4; dir++) {
-                int x = p.x + DirectionArrays.xDirs[dir];
-                int y = p.y + DirectionArrays.yDirs[dir];
-
-                if (x < 0 || x >= canWalkOn.length || y < 0 || y >= canWalkOn[0].length) {
-                    continue; // so we don't search outside the bounds
+                if (!canMoveInDirection(p, dir)) {
+                    continue;
                 }
 
-                if (x == x1 && y == y1) {
+                Point movedPoint = Point.createNewAndMove(p, dir);
+                if (movedPoint.equals(p1)) {
                     return dir;
                 }
-                queue.add(new Point(x, y));
+
+                queue.add(movedPoint);
             }
         }
 

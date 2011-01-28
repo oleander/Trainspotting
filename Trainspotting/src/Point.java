@@ -49,4 +49,10 @@ public class Point {
         x += DirectionArrays.xDirs[dir];
         y += DirectionArrays.yDirs[dir];
     }
+
+    public static Point createNewAndMove(Point p, int dir){
+        Point newP = new Point(p.x, p.y);
+        newP.moveInDirection(dir);
+        return newP;
+    }
 }
