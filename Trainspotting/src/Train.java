@@ -28,8 +28,6 @@ public final class Train extends Thread implements Runnable {
         this.pendingActions = new HashMap<Sensor, Runnable>();
         goingForwards = true;
         setMaxVelocity();
-        // initialisera första blockaden
-        trainAcquireSemaphor(railMap.getSegmentSemaphor(point0));
 
     }
 
@@ -50,6 +48,8 @@ public final class Train extends Thread implements Runnable {
     @Override
     public void run() {
         TSimInterface iface = TSimInterface.getInstance();
+        // initialize so the start-segment is taken
+        trainAcquireSemaphor(railMap.getSegmentSemaphor(point0));
 
         while (true) {
             SensorEvent event = null;
