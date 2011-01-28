@@ -44,7 +44,7 @@ public class RailMap {
 
         width = sc.nextInt();
         height = sc.nextInt();
-        createArray();
+        array = new int[transformToDetailed(width)][transformToDetailed(height)];
         sensorArray = new Sensor[width][height];
         sc.nextLine(); //remove eempty dimensions-line
 
@@ -369,14 +369,7 @@ public class RailMap {
     private static Point transformToDetailed(Point p) {
         return new Point(transformToDetailed(p.x), transformToDetailed(p.y));
     }
-
-    private void createArray() {
-        int X = transformToDetailed(width);
-        int Y = transformToDetailed(height);
-
-        array = new int[X][Y];
-    }
-
+    
     private void addRail(int x, int y, String rail) {
         // array[x][y] = 1; old implementation, removed
         x = transformToDetailed(x);
