@@ -159,8 +159,6 @@ public class RailMap {
         return numAdjacent == wantedAdjacent;
     }
 
-    // TODO: this isn't valid for new array type
-    // DONE i think
     public boolean canMoveInDirection(Point from, int dir) {
         int x = transformToDetailed(from.x);
         int y = transformToDetailed(from.y);
@@ -390,8 +388,6 @@ public class RailMap {
         array = new int[X][Y];
     }
 
-    // TODO fix so it works for 2x+1
-    // DONE (i think)
     private void addRail(int x, int y, String rail) {
         // array[x][y] = 1; old implementation, removed
         x = transformToDetailed(x);
