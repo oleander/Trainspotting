@@ -78,21 +78,6 @@ public class RailMap {
         }
     }
 
-    /**
-     * Get a array you can search the railway in. Doesn't contain switch-data
-     * @return array to search in. It's a copy, so you can edit it
-     */
-    public boolean[][] getSearchArray() {
-        boolean[][] arr =
-                new boolean[array.length][array[0].length];
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
-                arr[i][j] = array[i][j] > 0; // true if can walk on
-            }
-        }
-
-        return arr;
-    }
 
     public int getHeight() {
         return height;
