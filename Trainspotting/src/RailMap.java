@@ -136,16 +136,14 @@ public class RailMap {
     }
 
     public boolean canMoveInDirection(Point from, int dir) {
-        int x = transformToDetailed(from.x);
-        int y = transformToDetailed(from.y);
-        boolean ok = true;
-        x += DirectionArrays.xDirs[dir];
-        y += DirectionArrays.yDirs[dir];
-        ok &= existingDetailedCoordinate(x, y);
-        x += DirectionArrays.xDirs[dir];
-        y += DirectionArrays.yDirs[dir];
-        ok &= existingDetailedCoordinate(x, y);
-        return  ok;
+        for (int k = 1; k <= 2; k++) {
+            int x = transformToDetailed(from.x) + DirectionArrays.xDirs[dir]*k;
+            int y = transformToDetailed(from.y) + DirectionArrays.yDirs[dir]*k;
+            if(!existingDetailedCoordinate(x, y)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public SearchResult getNextCrossing(Point from, int dir0) {
