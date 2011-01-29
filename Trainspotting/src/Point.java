@@ -1,3 +1,7 @@
+/**
+ * Point representation in railway. Got some useful methods
+ *
+ */
 public class Point {
     public int x;
     public int y;
