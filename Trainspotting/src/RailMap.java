@@ -140,6 +140,7 @@ public class RailMap {
         return numAdjacent;
     }
 
+
     public boolean canMoveInDirection(Point from, int dir) {
         for (int k = 1; k <= 2; k++) {
             int x = transformToDetailed(from.x) + DirectionArrays.xDirs[dir] * k;
@@ -365,11 +366,12 @@ public class RailMap {
                 continue;
             }
             visitedPoints.add(p);//mark visited
+            System.err.println("p = " + p);
             for (int dir = 0; dir < 4; dir++) {
                 Point movedPoint = Point.createNewAndMove(p, dir);
-                if (movedPoint.equals(p1)) {
-                    System.err.println("dir = " + dir);
+                if (movedPoint.equals(p1) && canMoveInDirection(p, dir)) {
                     int retDir = getPrefferedDirection(movedPoint, dir);
+                    System.err.println("dir = " + dir);
                     System.err.println("retDir = " + retDir);
                     System.err.println("prio = " + prio);
                     return retDir;
