@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -391,7 +389,7 @@ public class RailMap {
             }
         }
 
-        System.err.println("bfs failed!");
+        System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ bfs failed! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         return -123;
     }
 

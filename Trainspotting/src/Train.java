@@ -5,8 +5,6 @@ import TSim.TSimInterface;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class Train extends Thread implements Runnable {
 
@@ -105,7 +103,7 @@ public final class Train extends Thread implements Runnable {
         setVelocity(goingForwards ? 1 : -1);
         SensorEvent se = getSensorEvent();
         if(se.getStatus() != SensorEvent.INACTIVE){
-            System.err.println("expected INACTIVE on turnaround");
+            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ expected INACTIVE on turnaround ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
         stopTrain();
         goingForwards ^= true; // turn direction
