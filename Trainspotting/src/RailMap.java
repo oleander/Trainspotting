@@ -341,8 +341,6 @@ public class RailMap {
             this.priority = priority;
         }
     }
-    // TODO: I'm quite sure this isn't enough!!!
-    // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
 
     public int getDirectionTrainCameWith(Point p0, Point p1, int prevDir) {
 //        System.err.println("bfsing from " + p0 + " to " + p1);
