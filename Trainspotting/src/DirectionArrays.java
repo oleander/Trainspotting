@@ -3,9 +3,9 @@
  * and open the template in the editor.
  */
 
-/**
- *
- * @author arash
+/*
+ * We represent directoin as an int in the range [0..3], the actual meaning
+ * for the 4 directions are in this class
  */
 public class DirectionArrays {
     public static final int[] xDirs = {1,  0, -1,  0};
