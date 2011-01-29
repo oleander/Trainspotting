@@ -82,7 +82,7 @@ public final class Train extends Thread implements Runnable {
         try {
             iface.setSpeed(id, velocity);
         } catch (CommandException ex) {
-            System.err.println("error setting velocity!!!!!!!!!");
+            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ error setting velocity!!!!!!!!! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
         currentVelocity = velocity;
     }
@@ -112,7 +112,7 @@ public final class Train extends Thread implements Runnable {
         try {
             sleep(1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Train.class.getName()).log(Level.SEVERE, null, ex);
+            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ train got interrupted during sleep! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
         setMaxVelocity();
     }
@@ -131,7 +131,7 @@ public final class Train extends Thread implements Runnable {
             s.acquire();
             say("Aquired semaphore " + s);
         } catch (InterruptedException ex) {
-            say("error when aquire semaphore " + ex.getMessage());
+            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ error when aquire semaphore " + ex.getMessage() + " ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
     }
 
@@ -153,9 +153,9 @@ public final class Train extends Thread implements Runnable {
         try {
             event = TSimInterface.getInstance().getSensor(id);
         } catch (CommandException ex) {
-            System.err.println("interface didn't allow getting sensor!!!");
+            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ interface didn't allow getting sensor!!! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         } catch (InterruptedException ex) {
-            System.err.println("train got interrupted waiting for sensor!");
+            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ train got interrupted waiting for sensor! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
 
         return event;

@@ -33,7 +33,7 @@ public class RailMap {
         try {
             sc = new Scanner(file);
         } catch (FileNotFoundException ex) {
-            System.err.println("file not found: " + ex);
+            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ file not found: " + ex + " ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
 
         if (!sc.nextLine().trim().equals("TrainLineFile 2")) {
@@ -319,7 +319,7 @@ public class RailMap {
         try {
             iface.setSwitch(switchPos.x, switchPos.y, b ? TSimInterface.SWITCH_LEFT : TSimInterface.SWITCH_RIGHT);
         } catch (CommandException ex) {
-            System.err.println("switch failade");
+            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ switch failade ¤¤¤¤¤¤¤¤¤¤¤¤¤");
         }
     }
 
