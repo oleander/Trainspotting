@@ -341,7 +341,9 @@ public class RailMap {
                     return retDir;
                 }
 
-                if (!canMoveInDirection(p, dir)) {
+                boolean isSensor = getSensor(movedPoint) != null;
+
+                if (!canMoveInDirection(p, dir) || isSensor) {
                     continue;
                 }
 
