@@ -314,8 +314,14 @@ public class RailMap {
 
     // TODO: I'm quite sure this isn't enough!!!
     // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
-    public int getDirectionTrainCameWith(Point p0, Point p1) {
+    public int getDirectionTrainCameWith(Point p0, Point p1, int prevDir) {
         System.err.println("bfsing from " + p0 + " to " + p1);
+
+        if(p0.equals(p1)){
+            System.err.println("Special case direction");
+            return prevDir;
+        }
+
         Queue<Point> queue = new LinkedList<Point>();
         Set<Point> visitedPoints = new HashSet<Point>();
         queue.add(p0);

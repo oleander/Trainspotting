@@ -18,6 +18,7 @@ public final class Train extends Thread implements Runnable {
     private boolean goingForwards;
     //private int x0, y0;
     private Point point0;
+    private int prevDir;
 
     public Train(RailMap railMap, int maxVelocity, int id) {
         this.railMap = railMap;
@@ -74,10 +75,11 @@ public final class Train extends Thread implements Runnable {
                     pendingActions.remove(sensor);
                 }
                 int direction =
-                        railMap.getDirectionTrainCameWith(point0, point);
+                        railMap.getDirectionTrainCameWith(point0, point, prevDir);
                 say("Hitted with direction " + direction);
                 sensor.getAction(direction, this);
-                point0 = point; // Point.createNewAndMove(point, direction);
+                point0 = Point.createNewAndMove(point, direction);
+                prevDir = direction;
             }
         }
 
