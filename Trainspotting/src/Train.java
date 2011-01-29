@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+/**
+ * One Train instance for each Train. Call start() to start the train in a
+ * seperate thread (as with anything extending Thread)
+ */
 public final class Train extends Thread implements Runnable {
 
     private RailMap railMap;
