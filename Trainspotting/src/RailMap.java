@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
@@ -113,7 +114,7 @@ public class RailMap {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 System.err.print(getNumAdjacentDirections(new Point(x, y)));
-            } 
+            }
             System.err.println("");
         }
     }
@@ -229,10 +230,24 @@ public class RailMap {
         return -1;
     }
 
+    /**
+     * @return true if is in range
+     */
+    public boolean validPoint(Point p) {
+        p = transformToDetailed(p);
+        return validDetailedCoordinate(p.x, p.y);
+    }
+
+    /**
+     * @return true if is in range
+     */
     private boolean validDetailedCoordinate(int x, int y) {
         return !(x <= 0 || y <= 0 || x >= transformToDetailed(width) || y >= transformToDetailed(height));
     }
 
+    /**
+     * @return true if is in range and rail is there
+     */
     private boolean existingDetailedCoordinate(int x, int y) {
         return validDetailedCoordinate(x, y) && array[x][y] > 0;
     }
@@ -312,22 +327,40 @@ public class RailMap {
         public boolean ok(Point p);
     }
 
+    // This class only exists because java don't support pairs, wtf!
+    private class PriorityPoint implements Comparable<PriorityPoint> {
+
+        public Point p;
+        public Integer priority;
+
+        public int compareTo(PriorityPoint o) {
+            return priority.compareTo(o.priority);
+        }
+
+        public PriorityPoint(Point p, Integer priority) {
+            this.p = p;
+            this.priority = priority;
+        }
+    }
     // TODO: I'm quite sure this isn't enough!!!
     // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
+
     public int getDirectionTrainCameWith(Point p0, Point p1, int prevDir) {
         System.err.println("bfsing from " + p0 + " to " + p1);
 
-        if(p0.equals(p1)){
-            System.err.println("Special case direction");
-            return prevDir;
-        }
 
-        Queue<Point> queue = new LinkedList<Point>();
+        if (p0.equals(p1)) {
+            System.err.println("Special case direction");
+            return getPrefferedDirection(p0, prevDir);
+        }
+        PriorityQueue<PriorityPoint> queue = new PriorityQueue<PriorityPoint>();
         Set<Point> visitedPoints = new HashSet<Point>();
-        queue.add(p0);
+        queue.add(new PriorityPoint(p0, 0));
 
         while (!queue.isEmpty()) {
-            Point p = queue.poll();
+            PriorityPoint pp = queue.poll();
+            Point p = pp.p;
+            int prio = pp.priority;
             if (visitedPoints.contains(p)) {
                 continue;
             }
@@ -338,16 +371,23 @@ public class RailMap {
                     System.err.println("dir = " + dir);
                     int retDir = getPrefferedDirection(movedPoint, dir);
                     System.err.println("retDir = " + retDir);
+                    System.err.println("prio = " + prio);
                     return retDir;
                 }
-
-                boolean isSensor = getSensor(movedPoint) != null;
-
-                if (!canMoveInDirection(p, dir) || isSensor) {
+                if (!validPoint(movedPoint)) {
                     continue;
                 }
-
-                queue.add(movedPoint);
+                boolean isSensor = getSensor(movedPoint) != null;
+                if (isSensor) {
+                    // walk through a sensor
+                    queue.add(new PriorityPoint(movedPoint, prio + 1000));
+                } else if (canMoveInDirection(p, dir)) {
+                    // walk normally
+                    queue.add(new PriorityPoint(movedPoint, prio + 1));
+                } else {
+                    // walk into a through a wall
+                    queue.add(new PriorityPoint(movedPoint, prio + 1000000));
+                }
             }
         }
 
