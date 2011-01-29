@@ -347,9 +347,7 @@ public class RailMap {
     // TODO: THIS IMPLEMENTATION ISN*T ENOUGH (but enough for origbana)
 
     public int getDirectionTrainCameWith(Point p0, Point p1, int prevDir) {
-        System.err.println("bfsing from " + p0 + " to " + p1);
-
-
+//        System.err.println("bfsing from " + p0 + " to " + p1);
         if (p0.equals(p1)) {
             System.err.println("Special case direction");
             return getPrefferedDirection(p0, prevDir);
@@ -366,14 +364,14 @@ public class RailMap {
                 continue;
             }
             visitedPoints.add(p);//mark visited
-            System.err.println("p = " + p);
+//            System.err.println("p = " + p);
             for (int dir = 0; dir < 4; dir++) {
                 Point movedPoint = Point.createNewAndMove(p, dir);
                 if (movedPoint.equals(p1) && canMoveInDirection(p, dir)) {
                     int retDir = getPrefferedDirection(movedPoint, dir);
-                    System.err.println("dir = " + dir);
-                    System.err.println("retDir = " + retDir);
-                    System.err.println("prio = " + prio);
+//                    System.err.println("dir = " + dir);
+//                    System.err.println("retDir = " + retDir);
+//                    System.err.println("prio = " + prio);
                     return retDir;
                 }
                 if (!validPoint(movedPoint)) {
