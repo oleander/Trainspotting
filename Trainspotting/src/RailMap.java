@@ -385,7 +385,7 @@ public class RailMap {
                     // walk normally
                     queue.add(new PriorityPoint(movedPoint, prio + 1));
                 } else {
-                    // walk into a through a wall
+                    // walk through a wall
                     queue.add(new PriorityPoint(movedPoint, prio + 1000000));
                 }
             }
