@@ -10,6 +10,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
+/**
+ * Railmap contains the data of the rails, it knows where the sensors are etc.
+ */
 public class RailMap {
 
     private int width, height;
