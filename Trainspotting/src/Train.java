@@ -48,19 +48,11 @@ public final class Train extends Thread implements Runnable {
 
     @Override
     public void run() {
-        TSimInterface iface = TSimInterface.getInstance();
         // initialize so the start-segment is taken
         trainAcquireSemaphor(railMap.getSegmentSemaphor(point0));
 
         while (true) {
-            SensorEvent event = null;
-            try {
-                event = iface.getSensor(id);
-            } catch (CommandException ex) {
-                System.err.println("interface didn't allow getting sensor!!!");
-            } catch (InterruptedException ex) {
-                System.err.println("train got interrupted waiting for sensor!");
-            }
+            SensorEvent event = getSensorEvent();
 
             final int x = event.getXpos();
             final int y = event.getYpos();
@@ -82,8 +74,6 @@ public final class Train extends Thread implements Runnable {
                 prevDir = direction;
             }
         }
-
-
     }
 
     public void setVelocity(int velocity) {
@@ -112,6 +102,11 @@ public final class Train extends Thread implements Runnable {
 
     public void stopWaitTurnAround() {
 
+        setVelocity(goingForwards ? 1 : -1);
+        SensorEvent se = getSensorEvent();
+        if(se.getStatus() != SensorEvent.INACTIVE){
+            System.err.println("expected INACTIVE on turnaround");
+        }
         stopTrain();
         goingForwards ^= true; // turn direction
         try {
@@ -151,5 +146,18 @@ public final class Train extends Thread implements Runnable {
 
     void releaseSemaphor(Semaphore s) {
         s.release();
+    }
+
+    private SensorEvent getSensorEvent() {
+        SensorEvent event = null;
+        try {
+            event = TSimInterface.getInstance().getSensor(id);
+        } catch (CommandException ex) {
+            System.err.println("interface didn't allow getting sensor!!!");
+        } catch (InterruptedException ex) {
+            System.err.println("train got interrupted waiting for sensor!");
+        }
+
+        return event;
     }
 }
