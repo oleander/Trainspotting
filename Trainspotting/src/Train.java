@@ -84,7 +84,7 @@ public final class Train extends Thread implements Runnable {
         try {
             iface.setSpeed(id, velocity);
         } catch (CommandException ex) {
-            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ error setting velocity!!!!!!!!! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("error setting velocity!!!!!!!!!");
         }
         currentVelocity = velocity;
     }
@@ -93,9 +93,6 @@ public final class Train extends Thread implements Runnable {
         return currentVelocity;
     }
 
-    public void say(String msg) {
-//        System.err.println("Train " + id + " says: " + msg);
-    }
 
     public void stopTrain() {
         say("Stopping train ...");
@@ -107,14 +104,14 @@ public final class Train extends Thread implements Runnable {
         setVelocity(goingForwards ? 1 : -1);
         SensorEvent se = getSensorEvent();
         if(se.getStatus() != SensorEvent.INACTIVE){
-            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ expected INACTIVE on turnaround ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("expected INACTIVE on turnaround");
         }
         stopTrain();
         goingForwards ^= true; // turn direction
         try {
             sleep(1000);
         } catch (InterruptedException ex) {
-            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ train got interrupted during sleep! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("train got interrupted during sleep!");
         }
         setMaxVelocity();
     }
@@ -133,7 +130,7 @@ public final class Train extends Thread implements Runnable {
             s.acquire();
             say("Aquired semaphore " + s);
         } catch (InterruptedException ex) {
-            say("¤¤¤¤¤¤¤¤¤¤¤¤¤ error when aquire semaphore " + ex.getMessage() + " ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("error when aquire semaphore " + ex.getMessage());
         }
     }
 
@@ -155,11 +152,27 @@ public final class Train extends Thread implements Runnable {
         try {
             event = TSimInterface.getInstance().getSensor(id);
         } catch (CommandException ex) {
-            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ interface didn't allow getting sensor!!! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("interface didn't allow getting sensor!!!");
         } catch (InterruptedException ex) {
-            System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ train got interrupted waiting for sensor! ¤¤¤¤¤¤¤¤¤¤¤¤¤");
+            sayImportant("train got interrupted waiting for sensor!");
         }
 
         return event;
+    }
+
+
+    /**
+     * make train say something to stderr
+     */
+    public void say(String msg) {
+//        System.err.println("Train " + id + " says: " + msg);
+    }
+
+
+    /**
+     * make train say something important to stderr
+     */
+    public void sayImportant(String msg) {
+        System.err.println("¤¤¤¤¤¤¤¤¤¤¤¤¤ Train " + id + " says: " + msg + " ¤¤¤¤¤¤¤¤¤¤¤¤¤");
     }
 }
