@@ -1,8 +1,16 @@
 # Trainspotting
 
+## READ FIRST
+
+Please consider reading this README-file at our github repo, where it is
+formatted in a more pleasent way.
+
+[Click here](https://github.com/oleander/Trainspotting) 
+
 ## Authors
 
 Arash Rouhani, cid rarash
+
 Linus Oleander, cid oleander
 
 ## Background
@@ -70,7 +78,37 @@ Out implementation must read the file as input, therfor it must be passed to the
 
 Here is an example of starting the simulation: 
 
-		2 "tsim bana -s 3" "java Lab1 bana 15 7"
+		$ 2 "tsim bana -s 3" "java Lab1 bana 15 7"
+		=> Starting java Lab1 bana 15 7
+		=> Starting tsim bana -s 3
+		=> Parse complete!
+		=> ...
 
+## How our code works
+
+We have a class that contains all the data about the railmap, **Railmap**.
+It is also responsible for parsing the railway-map.
+
+The train class contains information about the train and useful methods.
+
+The sensor class contains almost no information, it's primarly the place for
+sensor-related code.
+
+The other classes are of a lower level and are not mentioned.
+
+## Included maps
+
+Since we have a general solution, we couldn't resist to try out our solution
+on more "fun" maps
+
+
+## Screenshots
+
+
+### Bloopers
+
+![The train](https://github.com/oleander/Trainspotting/blob/master/Screenshot-tsim.png)
+The four trains in the top left have "stucked" eachother, they have
+taken semaphores in a cyclic way.
 
 
