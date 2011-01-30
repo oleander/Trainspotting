@@ -9,7 +9,7 @@ public final class Lab1 {
     }
 
     public Lab1() {
-        configInterface();
+        TSimInterface.getInstance().setDebug(false);
         startTrains();
 
     }
@@ -36,12 +36,6 @@ public final class Lab1 {
                 //startControlTrainForever(2);
             }
         }).start();
-    }
-
-    public void configInterface() {
-        TSimInterface inter = TSimInterface.getInstance();
-
-        inter.setDebug(false);
     }
 
 }
