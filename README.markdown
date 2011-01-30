@@ -107,7 +107,7 @@ on more "fun" maps
 
 ### Bloopers
 
-![The train](https://github.com/oleander/Trainspotting/blob/master/Screenshot-tsim.png)
+![The train](https://github.com/oleander/Trainspotting/raw/master/Screenshot-tsim.png)
 The four trains in the top left have "stucked" eachother, they have
 taken semaphores in a cyclic way.
 
