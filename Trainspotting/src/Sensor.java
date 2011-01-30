@@ -89,7 +89,7 @@ public class Sensor {
             int newDirection =
                     railMap.canMoveInDirection(switchPos, oldDirection) ? oldDirection : alterantiveDirection;
 
-            System.err.println("alternative 1");
+//            System.err.println("alternative 1");
             railMap.switchSoGivenDirWorks(switchPos, oldDirection, newDirection);
             t.addOneTimeAction(nextSensor, new Runnable() {
 
@@ -101,7 +101,7 @@ public class Sensor {
             // Ok, we simply must search again, but taking the other direction
             // of the switch, we know that there is another direction since
             // alternativeDirection >= 0
-            System.err.println("alternative 2");
+//            System.err.println("alternative 2");
             searchSensor = railMap.getNextSensor(switchPos, alterantiveDirection);
             nextSensor = railMap.getSensor(searchSensor.pos);
             newSemaphore = railMap.getSegmentSemaphor(nextSensor.position);
@@ -118,7 +118,7 @@ public class Sensor {
         } else {
             // since alternativeDirection == -1, then we must wait for other...
 
-            System.err.println("alternative 3");
+//            System.err.println("alternative 3");
             t.waitIfTakenThenGo(newSemaphore);
             railMap.switchSoGivenDirWorks(switchPos, oldDirection, oldDirection);
             t.addOneTimeAction(nextSensor, new Runnable() {
