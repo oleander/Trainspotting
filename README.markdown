@@ -61,10 +61,12 @@ but better trainflow.
 We do not try to temporairly slow down or halfen the speed at any time to increase the maximum train speed, as that would
 make the already complicated general solution more complicated.
 
-MovieSearcher has a really cool feature (*method*) called `find_by_release_name` that makes it possible to search for a movie based on the release name.
-You can for example specify ***Heartbreaker 2010 LIMITED DVDRip XviD-SUBMERGE*** and it will return the not to good [*Heartbreaker*](http://www.imdb.com/title/tt1465487/) by [*Pascal Chaumeil*](http://www.imdb.com/name/nm0154312/)
+We confidently say that the maximum speed is 14, however, it could easily be increased by using the more sparing
+sensor placenment, an example of that is highlighed in the file **origfast**.
 
-## So how do I use it?
+## Command line usage
+
+
 
 ### Start by installing the gem
 
