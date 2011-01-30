@@ -16,7 +16,8 @@ import java.util.concurrent.Semaphore;
 public class RailMap {
 
     private int width, height;
-    private int[][] array; //true if walkable
+    private int[][] array; //>=1 if walkable, >=5 if part of swing
+                           //have transformed dimensions!!! (2x+1)
     private Sensor[][] sensorArray;
     private ArrayList<Point> trainList;
 
@@ -98,7 +99,6 @@ public class RailMap {
         return trainList.get(id - 1);
     }
 
-    // doesn't print sensors
     public void printAsciiMap() {
         System.err.println("");
         for (int y = 0; y < array[0].length; y++) {

@@ -102,10 +102,7 @@ Since we have a general solution, we couldn't resist to try out our solution
 on more "fun" maps
 
 
-## Screenshots
-
-
-### Bloopers
+## Bloopers
 
 The four trains in the top left have "stucked" eachother, they have
 taken semaphores in a cyclic way.
