@@ -2,7 +2,7 @@
 import java.util.concurrent.Semaphore;
 
 /**
- * One Sensor isntance for each actual sensor, the sensors don't
+ * One Sensor instance for each actual sensor, the sensors don't
  * contain important fields. Only method is getAction().
  * For most purposes in it's calculations it's just uses the RailMap.
  */
