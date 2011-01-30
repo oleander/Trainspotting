@@ -63,3 +63,14 @@ make the already complicated general solution more complicated.
 
 We confidently say that the maximum speed is 14, however, it could easily be increased by using the more sparing
 sensor placenment, an example of that is highlighed in the file **origfast**.
+
+## Command line usage
+
+Out implementation must read the file as input, therfor it must be passed to the program.
+
+Here is an example of starting the simulation: 
+
+		2 "tsim bana -s 3" "java Lab1 bana 15 7"
+
+
+

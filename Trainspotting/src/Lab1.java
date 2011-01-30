@@ -25,14 +25,14 @@ public final class Lab1 {
     public Lab1(File file, int[] trainSpeeds) {
         railMap = new RailMap(file);
         TSimInterface.getInstance().setDebug(false);
-        startTrains();
+        startTrains(trainSpeeds);
     }
 
-    private void startTrains() {
-        railMap.printAsciiMap();
+    private void startTrains(int[] trainSpeeds) {
+//        railMap.printAsciiMap();
 
         for (int tid = 1; tid <= railMap.getNumTrains(); tid++) {
-            Train t = new Train(railMap, tid == 2 ? 14 : 2, tid);
+            Train t = new Train(railMap, trainSpeeds[tid-1], tid);
             t.start();
         }
 
