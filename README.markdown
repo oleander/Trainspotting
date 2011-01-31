@@ -1,5 +1,21 @@
 # Trainspotting
 
+## Post-submit found errors (PLEASE READ)
+
+Unfortunately our submitted code had a minor error in it. The trains don't sleep
+enough when they turn around. We would highly appreciate it if you could
+make this very minor edit yourself, instead of instantly rejecting the solution.
+
+In Train.java, please change **line 111*** from
+
+		sleep(1000);
+
+to 
+
+		sleep(3000);
+
+Or something like that.
+
 ## READ FIRST
 
 Please consider reading this README-file at our github repo, where it is
