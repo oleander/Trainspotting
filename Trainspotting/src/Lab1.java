@@ -2,6 +2,9 @@
 import TSim.*;
 import java.io.File;
 
+/**
+ * This class just parses the program parameters and then starts the trains.
+ */
 public final class Lab1 {
 
     private final RailMap railMap;
