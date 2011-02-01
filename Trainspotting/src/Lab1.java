@@ -35,12 +35,5 @@ public final class Lab1 {
             Train t = new Train(railMap, trainSpeeds[tid - 1], tid);
             t.start();
         }
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                //startControlTrainForever(2);
-            }
-        }).start();
     }
 }
