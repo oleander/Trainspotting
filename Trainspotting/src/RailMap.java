@@ -214,16 +214,7 @@ public class RailMap {
         if (alternativeSwitchDir >= 0) {
             preferredDirs[1] = alternativeSwitchDir;
         }
-        // following if statement is for "t-korsning", it should take which is
-        // rail-ically able
-//        if(array[x+DirectionArrays.xDirs[preferredDirs[1]]]
-//                [y+DirectionArrays.yDirs[preferredDirs[1]]] <
-//           array[x+DirectionArrays.xDirs[preferredDirs[2]]]
-//                [y+DirectionArrays.yDirs[preferredDirs[2]]]){
-//            int temp = preferredDirs[1];
-//            preferredDirs[1] = preferredDirs[2];
-//            preferredDirs[2] = temp;
-//        }
+        
         for (int d : preferredDirs) {
             if (canMoveInDirection(p, d)) {
                 return d;
@@ -395,7 +386,6 @@ public class RailMap {
     }
 
     private static int transformToDetailed(int xORy) {
-        //return xORy; //old
         return xORy * 2 + 1;
     }
 
@@ -404,7 +394,6 @@ public class RailMap {
     }
 
     private void addRail(int x, int y, String rail) {
-        // array[x][y] = 1; old implementation, removed
         x = transformToDetailed(x);
         y = transformToDetailed(y);
 
