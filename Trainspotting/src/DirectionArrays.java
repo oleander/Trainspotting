@@ -8,7 +8,8 @@
  * for the 4 directions are in this class
  */
 public class DirectionArrays {
-    public static final int[] xDirs = {1,  0, -1,  0};
-    public static final int[] yDirs = {0,  1,  0, -1};
-    public static final String[] dirNames = {"Right",  "Down", "Left","Up"};
+
+    public static final int[] xDirs = {1, 0, -1, 0};
+    public static final int[] yDirs = {0, 1, 0, -1};
+    public static final String[] dirNames = {"Right", "Down", "Left", "Up"};
 }

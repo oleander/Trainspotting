@@ -32,7 +32,7 @@ public final class Lab1 {
 //        railMap.printAsciiMap();
 
         for (int tid = 1; tid <= railMap.getNumTrains(); tid++) {
-            Train t = new Train(railMap, trainSpeeds[tid-1], tid);
+            Train t = new Train(railMap, trainSpeeds[tid - 1], tid);
             t.start();
         }
 

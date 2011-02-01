@@ -1,4 +1,10 @@
+
+/**
+ * The "searchresult" after searching along a track.
+ * Members are public for simplicity of usage.
+ */
 public class SearchResult {
+
     public Point pos;
     public int direction;
     public int distance;
@@ -10,7 +16,7 @@ public class SearchResult {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "pos = " + pos + ", dir = " + direction + ", dist = " + distance;
     }
 }

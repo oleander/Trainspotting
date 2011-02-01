@@ -1,8 +1,10 @@
+
 /**
  * Point representation in railway. Got some useful methods
- *
+ * Members are public for simplicity of usage.
  */
 public class Point {
+
     public int x;
     public int y;
 
@@ -16,10 +18,8 @@ public class Point {
         return super.clone();
     }
 
-    
-
     @Override
-    public String toString(){
+    public String toString() {
         return "(" + x + ", " + y + ")";
     }
 
@@ -54,7 +54,7 @@ public class Point {
         y += DirectionArrays.yDirs[dir];
     }
 
-    public static Point createNewAndMove(Point p, int dir){
+    public static Point createNewAndMove(Point p, int dir) {
         Point newP = new Point(p.x, p.y);
         newP.moveInDirection(dir);
         return newP;
