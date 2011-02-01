@@ -29,7 +29,6 @@ public class Sensor {
         getSegementSemaphorAction(dir0, t);
     }
 
-
     private void getTurnAroundAction(int dir0, Train t) {
         final SearchResult nextSensor = railMap.getNextSensor(position, dir0);
         if (nextSensor == null) {
@@ -46,6 +45,8 @@ public class Sensor {
         }
 
         if (nextCross.distance > nextSensor.distance) {
+            // This means that there is a sensor closer to the crossing
+            // than the actual sensor.
             return;
         }
 
@@ -81,7 +82,8 @@ public class Sensor {
 
         Point switchPos = searchSwitch.pos;
         int oldDirection = searchSwitch.direction;
-        final int alterantiveDirection = railMap.otherSwitchDirection(switchPos, oldDirection);
+        final int alterantiveDirection =
+                railMap.otherSwitchDirection(switchPos, oldDirection);
 
         boolean couldAquire = newSemaphore.tryAcquire();
         if (couldAquire) {
@@ -132,4 +134,3 @@ public class Sensor {
 
     }
 }
-
